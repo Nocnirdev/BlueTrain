@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="BlueTrain — Plataforma de entrenamiento, tracking de rendimiento y nutrición deportiva.">
+  <meta property="og:title" content="BlueTrain · Entrena. Registra. Evoluciona.">
+  <meta property="og:description" content="Tracking de entrenamientos, dashboard de rendimiento y nutrición basada en evidencia.">
+  <meta property="og:type" content="website">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BlueTrain">
+  <link rel="manifest" href="/manifest.json">
+  <title>BlueTrain · Tracking de Rendimiento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       AUTH GATE (visible cuando no hay sesión)
+       ══════════════════════════════════════ -->
+  <div id="authSection" class="auth-section hidden" aria-label="Inicio de sesión">
+    <!-- Renderizado por src/views/auth.ts -->
+  </div>
+
+  <!-- ══════════════════════════════════════
+       APP SHELL (visible cuando hay sesión)
+       ══════════════════════════════════════ -->
+  <div id="appShell" class="hidden">
+
+    <a href="#mainContent" class="skip-link">Saltar al contenido</a>
+
+    <!-- HEADER -->
+    <header class="header" role="banner">
+      <div class="header-row">
+        <div class="logo" aria-label="BlueTrain">Blue<span>Train</span></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="timer-btn" id="timerOpenBtn" aria-label="Abrir temporizador de descanso">
+            ⏱ Descanso
+          </button>
+        </div>
+      </div>
+      <nav class="view-nav" id="viewNav" aria-label="Navegación principal">
+        <button class="view-tab active" data-view="dashboard"   aria-current="page">Dashboard</button>
+        <button class="view-tab"        data-view="training"    aria-current="false">Entrena</button>
+        <button class="view-tab"        data-view="competition" aria-current="false">Competición</button>
+        <button class="view-tab"        data-view="nutrition"   aria-current="false">Nutrición</button>
+        <button class="view-tab"        data-view="history"     aria-current="false">Historial</button>
+      </nav>
+      <nav class="session-nav" id="sessionNav" style="display:none;" aria-label="Sesiones de entrenamiento">
+        <button class="session-tab active" data-session="A1">Mes 1 · A</button>
+        <button class="session-tab"        data-session="B1">Mes 1 · B</button>
+        <button class="session-tab"        data-session="C1">Mes 1 · C</button>
+        <button class="session-tab"        data-session="A2">Mes 2 · A</button>
+        <button class="session-tab"        data-session="B2">Mes 2 · B</button>
+        <button class="session-tab"        data-session="C2">Mes 2 · C</button>
+        <button class="session-tab"        data-session="A3">Mes 3 · A</button>
+      </nav>
+    </header>
+
+    <!-- SECCIONES -->
+    <main class="main section-page active" id="dashboardSection" aria-label="Dashboard" tabindex="-1">
+      <div class="loading-state">Cargando dashboard…</div>
+    </main>
+
+    <section class="main section-page" id="mainContent"
+             aria-live="polite" aria-label="Plan de entrenamiento" tabindex="-1">
+      <div class="loading-state">Cargando sesión…</div>
+    </section>
+
+    <section class="main section-page" id="competitionSection"
+             aria-label="Guía de carrera funcional por estaciones"></section>
+
+    <section class="main section-page" id="nutritionSection"
+             aria-label="Nutrición deportiva basada en evidencia"></section>
+
+    <section class="main section-page" id="historySection"
+             aria-label="Historial de entrenamientos"></section>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-container" id="progressContainer" style="display:none;"
+         role="status" aria-live="polite" aria-label="Progreso de la sesión">
+      <div class="progress-info">
+        <span>Progreso de la sesión</span>
+        <span id="progressText">0 / 0</span>
+      </div>
+      <div class="progress-track" role="progressbar"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- MODAL: TEMPORIZADOR -->
+    <div class="timer-modal" id="timerModal"
+         role="dialog" aria-modal="true" aria-label="Temporizador de descanso">
+      <div class="timer-label">Descanso</div>
+      <div class="timer-display" id="timerDisplay" aria-live="off">01:30</div>
+      <div class="timer-presets" role="group" aria-label="Presets de tiempo">
+        <button class="timer-preset" data-sec="45">45s</button>
+        <button class="timer-preset" data-sec="60">1:00</button>
+        <button class="timer-preset active" data-sec="90">1:30</button>
+        <button class="timer-preset" data-sec="120">2:00</button>
+        <button class="timer-preset" data-sec="150">2:30</button>
+      </div>
+      <div class="timer-actions">
+        <button class="timer-action" id="timerStart">Iniciar</button>
+        <button class="timer-action secondary" id="timerClose">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- MODAL: LOG DE SESIÓN -->
+    <div class="bt-modal" id="logModal"
+         role="dialog" aria-modal="true" aria-label="Registrar sesión completada">
+      <div class="modal-sheet">
+        <div class="modal-handle" aria-hidden="true"></div>
+        <div class="modal-title" id="logModalTitle">Sesión completada</div>
+        <div class="modal-subtitle" id="logModalSub"></div>
+        <div class="log-field">
+          <label class="log-label">Ejercicios completados</label>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:var(--accent);"
+               id="logCompletionPct">—</div>
+        </div>
+        <div class="log-field">
+          <label class="log-label" for="logDuration">Duración real (minutos)</label>
+          <input class="log-input" id="logDuration" type="number"
+                 min="5" max="240" placeholder="60" aria-label="Duración en minutos">
+        </div>
+        <div class="log-field">
+          <label class="log-label" for="logRpe">Esfuerzo percibido (RPE 1–10)</label>
+          <div class="rpe-row">
+            <input class="rpe-track" id="logRpe" type="range"
+                   min="1" max="10" value="7" step="1" aria-label="RPE del 1 al 10">
+            <div class="rpe-val" id="logRpeVal">7</div>
+          </div>
+        </div>
+        <div class="log-field">
+          <label class="log-label">Rendimiento — ejercicios principales</label>
+          <div class="perf-inputs" id="logPerfInputs"></div>
+        </div>
+        <div class="modal-divider"></div>
+        <div class="log-field">
+          <label class="log-label" for="logNotes">Notas (opcional)</label>
+          <textarea class="log-textarea" id="logNotes"
+                    placeholder="¿Cómo fue la sesión? ¿Qué mejorar?"
+                    aria-label="Notas sobre la sesión"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-save" id="saveLogBtn">Guardar sesión</button>
+          <button class="btn-cancel" id="cancelLogBtn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PERFIL -->
+    <div class="bt-modal" id="profileModal"
+         role="dialog" aria-modal="true" aria-label="Perfil de usuario">
+      <div class="modal-sheet">
+        <div class="modal-handle" aria-hidden="true"></div>
+        <div class="modal-title">Mi Perfil</div>
+        <div class="profile-header">
+          <div class="profile-avatar-lg" id="profileAvatar">?</div>
+          <div class="profile-stats-mini">
+            <div class="profile-stat">
+              <div class="profile-stat-val" id="profileStatSessions">0</div>
+              <div class="profile-stat-label">Sesiones</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-val" id="profileStatStreak">0</div>
+              <div class="profile-stat-label">Racha</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-val" id="profileStatTime">0h</div>
+              <div class="profile-stat-label">Total</div>
+            </div>
+          </div>
+        </div>
+        <div class="log-field">
+          <label class="log-label" for="profileName">Nombre</label>
+          <input class="log-input" id="profileName" type="text"
+                 maxlength="30" aria-label="Nombre de usuario">
+        </div>
+        <div class="log-field">
+          <label class="log-label">Nivel</label>
+          <div class="level-grid" style="margin-bottom:0;">
+            <button class="option-btn profile-level-btn" data-val="beginner">Principiante</button>
+            <button class="option-btn profile-level-btn" data-val="intermediate">Intermedio</button>
+            <button class="option-btn profile-level-btn" data-val="advanced">Avanzado</button>
+          </div>
+        </div>
+        <div class="log-field">
+          <label class="log-label">Objetivo</label>
+          <div class="goal-grid" style="margin-bottom:0;">
+            <button class="option-btn profile-goal-btn" data-val="fat_loss">Pérdida de grasa</button>
+            <button class="option-btn profile-goal-btn" data-val="hypertrophy">Ganar músculo</button>
+            <button class="option-btn profile-goal-btn" data-val="performance">Rendimiento</button>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-save" id="profileSaveBtn">Guardar</button>
+          <button class="btn-cancel" id="profileCancelBtn">Cancelar</button>
+        </div>
+        <div class="danger-zone">
+          <button class="btn-danger" id="clearHistoryBtn">
+            Borrar todo el historial
+          </button>
+          <button class="btn-danger" id="signOutBtn" style="margin-top:8px;">
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: CONFIRM DIALOG (reemplaza window.confirm) -->
+    <div class="bt-modal" id="confirmModal"
+         role="alertdialog" aria-modal="true" aria-labelledby="confirmMessage">
+      <div class="modal-sheet" style="max-height:auto;">
+        <div class="modal-handle" aria-hidden="true"></div>
+        <p id="confirmMessage" style="font-size:15px;margin:0 0 20px 0;line-height:1.5;"></p>
+        <div class="modal-actions">
+          <button class="btn-save" id="confirmOk">Confirmar</button>
+          <button class="btn-cancel" id="confirmCancel">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="bt-toast" id="btToast" aria-live="polite" aria-atomic="true"></div>
+
+  </div><!-- /appShell -->
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

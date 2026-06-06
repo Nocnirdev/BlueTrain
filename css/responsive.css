@@ -1,0 +1,51 @@
+/* =====================================================
+   BlueTrain — responsive.css
+   Media queries y ajustes específicos por viewport.
+   El diseño es mobile-first; estas reglas amplían
+   la experiencia en pantallas más grandes.
+   ===================================================== */
+
+/* ─── Tablet (≥ 600px) ─── */
+@media (min-width: 600px) {
+  .session-stats { grid-template-columns: repeat(3, 1fr); }
+  .stations-grid { grid-template-columns: repeat(2, 1fr); }
+  .nutr-grid     { grid-template-columns: repeat(2, 1fr); }
+  .calc-grid     { grid-template-columns: repeat(4, 1fr); }
+  .calc-results  { grid-template-columns: repeat(3, 1fr); }
+  .timer-display { font-size: 140px; }
+}
+
+/* ─── Desktop (≥ 900px) ─── */
+@media (min-width: 900px) {
+  .main { padding: 20px 24px; }
+  .session-hero { padding: 28px; }
+  .session-title { font-size: 44px; }
+  .stations-grid { grid-template-columns: repeat(3, 1fr); }
+  .nutr-grid     { grid-template-columns: repeat(3, 1fr); }
+  .section-hero h2 { font-size: 38px; }
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  .sq-body, .dl-body, .dl-bar, .bg-body, .plank-body,
+  .db-al, .db-ar, .db-ll, .db-lr, .pu-body, .rw-arm,
+  .rw-weight, .cu-arm, .tr-arm, .bp-body, .wb-body,
+  .wb-ball, .kb-body, .kb-arms, .lg-body, .mc-ll, .mc-lr,
+  .jr-body, .jr-rope, .ru-body, .ru-lf, .ru-lb, .ru-af,
+  .ru-ab, .er-body, .er-arm, .sk-body, .sk-arms, .fc-body,
+  .fc-ll, .fc-lr, .sl-all, .cc-back, .tr-rotate, .br-hip,
+  .bd-arm-a, .bd-leg-a, .pa-arms, .ho-body, .jj-all, .jj-al,
+  .jj-ar, .jj-ll, .jj-lr, .sc-body, .ba-band, .ytw-arms,
+  .pud-body, .bbj-all, .rr-arm, .gob-body, .sld-body,
+  .sqj-body, .stretch, .br-circle {
+    animation: none;
+  }
+}
+
+/* ─── iOS safe area adjustments ─── */
+@supports (padding: max(0px)) {
+  .header { padding-top: max(14px, env(safe-area-inset-top)); }
+  .progress-container {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
