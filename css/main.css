@@ -1,162 +1,333 @@
-/* =====================================================
+/* ============================================================
    BlueTrain — main.css
-   Variables, reset, layout base, header, navigation,
-   progress bar y timer modal skeleton.
-   ===================================================== */
+   Design tokens · Reset · Base · Layout · Header · Navigation
+   ============================================================ */
 
-/* ─── Design tokens ─── */
+/* ── Design Tokens ──────────────────────────────────────── */
+
 :root {
-  --bg: #0a0a0a; --bg-2: #141414; --bg-3: #1c1c1c;
-  --border: #2a2a2a; --border-bright: #3a3a3a;
-  --text: #f5f5f5; --text-dim: #8a8a8a; --text-dimmer: #555;
-  --accent: #d4ff00; --accent-dim: #a3c700;
-  --warn: #ff5b3a; --ok: #4ade80;
-  --warmup: #f59e0b; --strength: #d4ff00; --competition: #06b6d4;
-  --finisher: #ec4899; --cooldown: #a78bfa;
-  --skin: #e6e6e6; --skin-dark: #999;
-  --r-md: 6px; --r-lg: 12px; --r-xl: 18px;
-  --header-h: 160px;
+
+  /* Brand */
+  --accent:           #d4ff00;
+  --accent-dim:       #b8e000;
+  --accent-subtle:    rgba(212, 255, 0, 0.08);
+
+  /* Surfaces */
+  --bg:               #0c0c0c;
+  --surface-1:        #111111;
+  --surface-2:        #171717;
+  --surface-3:        #1e1e1e;
+
+  /* Borders */
+  --border:           #222222;
+  --border-strong:    #2e2e2e;
+  --border-focus:     #444444;
+
+  /* Text */
+  --text:             #ededed;
+  --text-2:           #999999;
+  --text-3:           #555555;
+
+  /* Semantic — success */
+  --success:          #22c55e;
+  --success-bg:       rgba(34, 197, 94, 0.08);
+  --success-border:   rgba(34, 197, 94, 0.2);
+
+  /* Semantic — error */
+  --error:            #f87171;
+  --error-bg:         rgba(248, 113, 113, 0.08);
+  --error-border:     rgba(248, 113, 113, 0.2);
+
+  /* Semantic — warning */
+  --warning:          #fbbf24;
+  --warning-bg:       rgba(251, 191, 36, 0.08);
+  --warning-border:   rgba(251, 191, 36, 0.2);
+
+  /* Semantic — info */
+  --info:             #60a5fa;
+  --info-bg:          rgba(96, 165, 250, 0.08);
+  --info-border:      rgba(96, 165, 250, 0.2);
+
+  /* Workout types */
+  --type-strength:    #d4ff00;
+  --type-competition: #22d3ee;
+  --type-finisher:    #e879f9;
+  --type-warmup:      #fbbf24;
+  --type-cooldown:    #a78bfa;
+
+  /* Typography */
+  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:  'JetBrains Mono', 'SF Mono', 'Cascadia Code', monospace;
+
+  --text-xs:    11px;
+  --text-sm:    12px;
+  --text-base:  14px;
+  --text-md:    15px;
+  --text-lg:    17px;
+  --text-xl:    20px;
+  --text-2xl:   24px;
+  --text-3xl:   30px;
+
+  --leading-tight:   1.2;
+  --leading-snug:    1.35;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+
+  /* Spacing (4px base unit) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Border radius */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   12px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.5);
+
+  /* Header height (calculated at runtime) */
+  --header-h: 120px;
 }
 
-/* ─── Reset ─── */
+/* ── Reset ──────────────────────────────────────────────── */
+
 *, *::before, *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
+
 html, body {
-  margin: 0; padding: 0;
-  background: var(--bg); color: var(--text);
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 15px; line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: contain;
 }
+
 body {
-  background-image:
-    radial-gradient(ellipse at top, rgba(212,255,0,0.04), transparent 50%),
-    radial-gradient(ellipse at bottom, rgba(6,182,212,0.03), transparent 50%);
   min-height: 100vh;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ─── Accessibility: Skip link ─── */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* ── Accessibility ──────────────────────────────────────── */
+
 .skip-link {
-  position: absolute; top: -50px; left: 8px;
-  background: var(--accent); color: #000; padding: 8px 14px;
-  font-weight: 700; font-size: 13px; text-decoration: none;
-  border-radius: 0 0 var(--r-md) var(--r-md); z-index: 999;
-  transition: top .15s;
+  position: absolute;
+  top: -60px;
+  left: var(--space-2);
+  background: var(--accent);
+  color: #000;
+  padding: var(--space-2) var(--space-4);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  z-index: 999;
+  transition: top 0.15s;
 }
 .skip-link:focus { top: 0; }
 
-/* ─── Header ─── */
+/* ── Header ─────────────────────────────────────────────── */
+
 .header {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(10,10,10,0.92);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(12, 12, 12, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  padding: 14px 16px;
-  padding-top: max(14px, env(safe-area-inset-top));
+  padding: var(--space-3) var(--space-4);
+  padding-top: max(var(--space-3), env(safe-area-inset-top));
 }
+
 .header-row {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-3);
 }
+
 .logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 28px; letter-spacing: 0.08em;
-  color: var(--accent); line-height: 1;
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 1;
 }
 .logo span { color: var(--text); }
-.timer-btn {
-  background: var(--bg-3); border: 1px solid var(--border-bright);
-  color: var(--text); padding: 6px 12px; border-radius: 100px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .15s;
-}
-.timer-btn:active { transform: scale(0.96); background: var(--accent); color: #000; }
 
-/* ─── View navigation ─── */
+/* ── View navigation ────────────────────────────────────── */
+
 .view-nav {
-  display: flex; gap: 6px; margin-top: 10px;
-  overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
 }
 .view-nav::-webkit-scrollbar { display: none; }
-.view-tab {
-  flex-shrink: 0; background: transparent;
-  border: 1px solid var(--border); color: var(--text-dim);
-  padding: 5px 14px; border-radius: 100px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  cursor: pointer; transition: all .15s; white-space: nowrap;
-}
-.view-tab.active {
-  background: var(--bg-3); color: var(--text);
-  border-color: var(--border-bright);
-}
 
-/* ─── Session navigation ─── */
+.view-tab {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.view-tab:hover { color: var(--text); background: var(--surface-3); }
+.view-tab.active { color: var(--text); background: var(--surface-2); }
+
+/* ── Session navigation ─────────────────────────────────── */
+
 .session-nav {
-  display: flex; gap: 6px; margin-top: 12px;
-  overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
 }
 .session-nav::-webkit-scrollbar { display: none; }
+
 .session-tab {
-  flex-shrink: 0; background: var(--bg-3);
-  border: 1px solid var(--border); color: var(--text-dim);
-  padding: 6px 12px; border-radius: 100px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; font-weight: 600;
-  letter-spacing: 0.05em; text-transform: uppercase;
-  cursor: pointer; transition: all .15s; white-space: nowrap;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
 }
+.session-tab:hover { color: var(--text); border-color: var(--border-strong); }
 .session-tab.active {
-  background: var(--accent); color: #000; border-color: var(--accent);
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+  font-weight: 600;
 }
 
-/* ─── Main content area ─── */
-.main { padding: 16px; max-width: 720px; margin: 0 auto; }
+/* ── Main content area ──────────────────────────────────── */
+
+.main {
+  padding: var(--space-4);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 .section-page { display: none; }
 .section-page.active { display: block; }
 
-/* ─── Progress bar (bottom sticky) ─── */
+/* ── Progress bar ───────────────────────────────────────── */
+
 .progress-container {
-  position: sticky; bottom: 0; left: 0; right: 0;
-  background: rgba(10,10,10,0.95);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(12, 12, 12, 0.97);
   border-top: 1px solid var(--border);
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom)) 16px;
+  padding: var(--space-3) var(--space-4);
+  padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
   z-index: 90;
 }
+
 .progress-info {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 8px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--text-dim);
-  text-transform: uppercase; letter-spacing: 0.1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-2);
 }
-.progress-info span:last-child { color: var(--accent); font-weight: 700; }
+.progress-info span:last-child { color: var(--text); font-weight: 600; }
+
 .progress-track {
-  height: 4px; background: var(--bg-3);
-  border-radius: 100px; overflow: hidden;
+  height: 3px;
+  background: var(--surface-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
 }
+
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--competition));
-  border-radius: 100px; width: 0%; transition: width .3s ease;
+  background: var(--accent);
+  border-radius: var(--radius-full);
+  width: 0%;
+  transition: width 0.25s ease;
 }
 
-/* ─── Loading state ─── */
+/* ── Loading / empty state ──────────────────────────────── */
+
 .loading-state {
-  text-align: center; padding: 60px 20px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px; color: var(--text-dimmer);
-  text-transform: uppercase; letter-spacing: 0.12em;
+  text-align: center;
+  padding: var(--space-12) var(--space-5);
+  font-size: var(--text-sm);
+  color: var(--text-3);
 }
 
-/* ─── Footer ─── */
+/* ── Footer info ────────────────────────────────────────── */
+
 .footer-info {
-  text-align: center; padding: 20px 0 80px 0;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--text-dimmer);
-  letter-spacing: 0.1em; text-transform: uppercase;
+  text-align: center;
+  padding: var(--space-5) 0 var(--space-12) 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 0.1em;
 }
+
+/* ── Utility: timer button (header) ─────────────────────── */
+
+.timer-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  color: var(--text-2);
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.03em;
+}
+.timer-btn:hover { color: var(--text); border-color: var(--border-focus); }

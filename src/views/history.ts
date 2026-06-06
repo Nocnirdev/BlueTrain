@@ -39,7 +39,9 @@ export async function renderHistory(): Promise<void> {
 
     ${filtered.length === 0
       ? `<div class="empty-state">
-           <div class="empty-state-icon">📋</div>
+           <div class="empty-state-icon">
+             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>
+           </div>
            <h3>${history.length ? 'Sin resultados' : 'Sin sesiones aún'}</h3>
            <p>${history.length
                ? 'No hay sesiones de tipo "' + esc(_filter) + '"'

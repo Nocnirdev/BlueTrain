@@ -121,7 +121,6 @@ export async function renderSession(key: string): Promise<void> {
             <div class="anim-section">
               <div class="anim-stage">
                 <div class="anim-label">${esc(label)}</div>
-                <div class="anim-counter">LOOP</div>
                 ${animSvg}
               </div>
               <div class="video-actions">

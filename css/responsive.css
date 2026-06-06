@@ -1,31 +1,35 @@
-/* =====================================================
+/* ============================================================
    BlueTrain — responsive.css
-   Media queries y ajustes específicos por viewport.
-   El diseño es mobile-first; estas reglas amplían
-   la experiencia en pantallas más grandes.
-   ===================================================== */
+   Mobile-first. Estas reglas amplían en pantallas mayores.
+   ============================================================ */
 
-/* ─── Tablet (≥ 600px) ─── */
+/* ── Tablet ≥ 600px ─────────────────────────────────────── */
 @media (min-width: 600px) {
-  .session-stats { grid-template-columns: repeat(3, 1fr); }
-  .stations-grid { grid-template-columns: repeat(2, 1fr); }
-  .nutr-grid     { grid-template-columns: repeat(2, 1fr); }
-  .calc-grid     { grid-template-columns: repeat(4, 1fr); }
-  .calc-results  { grid-template-columns: repeat(3, 1fr); }
-  .timer-display { font-size: 140px; }
+  .session-stats        { grid-template-columns: repeat(3, 1fr); }
+  .stations-grid        { grid-template-columns: repeat(2, 1fr); }
+  .nutr-grid            { grid-template-columns: repeat(2, 1fr); }
+  .calc-grid            { grid-template-columns: repeat(4, 1fr); }
+  .calc-results         { grid-template-columns: repeat(3, 1fr); }
+  .stats-grid           { grid-template-columns: repeat(4, 1fr); }
+  .timer-display        { font-size: 96px; }
+  .modal-sheet          { border-radius: var(--radius-xl); margin: var(--space-5); max-height: 85vh; }
+  .bt-modal             { align-items: center; }
+  .level-grid, .goal-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* ─── Desktop (≥ 900px) ─── */
+/* ── Desktop ≥ 900px ────────────────────────────────────── */
 @media (min-width: 900px) {
-  .main { padding: 20px 24px; }
-  .session-hero { padding: 28px; }
-  .session-title { font-size: 44px; }
-  .stations-grid { grid-template-columns: repeat(3, 1fr); }
-  .nutr-grid     { grid-template-columns: repeat(3, 1fr); }
-  .section-hero h2 { font-size: 38px; }
+  .main                 { padding: var(--space-5) var(--space-6); }
+  .session-hero         { padding: var(--space-6); }
+  .session-title        { font-size: var(--text-3xl); }
+  .stations-grid        { grid-template-columns: repeat(3, 1fr); }
+  .nutr-grid            { grid-template-columns: repeat(3, 1fr); }
+  .section-hero h2      { font-size: var(--text-2xl); }
+  .dash-greeting        { padding: var(--space-6); }
+  .auth-card            { padding: var(--space-10) var(--space-8); }
 }
 
-/* ─── Reduced motion ─── */
+/* ── Reduced motion ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .sq-body, .dl-body, .dl-bar, .bg-body, .plank-body,
   .db-al, .db-ar, .db-ll, .db-lr, .pu-body, .rw-arm,
@@ -40,12 +44,19 @@
   .sqj-body, .stretch, .br-circle {
     animation: none;
   }
+  .modal-sheet { animation: none; }
+  .bt-toast    { transition: none; }
 }
 
-/* ─── iOS safe area adjustments ─── */
+/* ── iOS safe area ──────────────────────────────────────── */
 @supports (padding: max(0px)) {
-  .header { padding-top: max(14px, env(safe-area-inset-top)); }
+  .header {
+    padding-top: max(var(--space-3), env(safe-area-inset-top));
+  }
   .progress-container {
-    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  }
+  .auth-section {
+    padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
   }
 }

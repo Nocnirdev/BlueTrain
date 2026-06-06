@@ -104,7 +104,7 @@ function _skeleton(): string {
 }
 
 function _lastSession(s: SessionEntry): string {
-  const rpeColor = s.rpe >= 9 ? 'var(--warn)' : s.rpe >= 7 ? 'var(--warmup)' : 'var(--ok)';
+  const rpeColor = s.rpe >= 9 ? 'var(--error)' : s.rpe >= 7 ? 'var(--warning)' : 'var(--success)';
   return `
     <div class="section-title-bar"><h3>Último entrenamiento</h3></div>
     <div class="activity-item" style="margin-bottom:16px;" data-expandable>
@@ -153,7 +153,7 @@ export function renderActivityItem(s: SessionEntry, showDelete: boolean): string
 }
 
 function _activityItem(s: SessionEntry, showDelete: boolean): string {
-  const rpeColor = s.rpe >= 9 ? 'var(--warn)' : s.rpe >= 7 ? 'var(--warmup)' : 'var(--ok)';
+  const rpeColor = s.rpe >= 9 ? 'var(--error)' : s.rpe >= 7 ? 'var(--warning)' : 'var(--success)';
   return `
     <div class="activity-item" data-expandable data-id="${esc(s.id)}">
       <div class="activity-row">
@@ -197,8 +197,8 @@ function _typeColor(type: string): string {
 }
 
 function _motivationalMsg(weekSessions: number, streak: number): string {
-  if (streak >= 5) return `Racha de ${streak} días. Imparable.`;
-  if (weekSessions >= 3) return `${weekSessions} sesiones esta semana. Excelente.`;
-  if (weekSessions === 0) return 'Hoy es un buen día para entrenar.';
-  return `${weekSessions} sesión${weekSessions > 1 ? 'es' : ''} esta semana. Sigue así.`;
+  if (streak >= 5) return `${streak} días consecutivos de entrenamiento.`;
+  if (weekSessions >= 3) return `${weekSessions} sesiones completadas esta semana.`;
+  if (weekSessions === 0) return 'Sin sesiones esta semana.';
+  return `${weekSessions} sesión${weekSessions > 1 ? 'es' : ''} esta semana.`;
 }

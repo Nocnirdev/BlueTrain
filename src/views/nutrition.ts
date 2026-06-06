@@ -15,7 +15,7 @@ export function renderNutrition(): void {
       <h3>IMPORTANTE: LA GRASA LOCALIZADA NO EXISTE</h3>
       <p>La evidencia científica actual <strong>no respalda</strong> la reducción de grasa localizada (<em>spot reduction</em>). Los ejercicios de core <strong>fortalecen la musculatura abdominal pero no eliminan la grasa de esa zona</strong>.</p>
       <p>La pérdida de grasa ocurre de forma sistémica mediante un déficit calórico sostenido.</p>
-      <p style="font-size:11px;color:var(--text-dimmer);margin-top:6px;">Ref: Ramírez-Campillo et al. (2013). J Strength Cond Res. / ACSM Position Stand on Exercise for Weight Management.</p>
+      <p style="font-size:11px;color:var(--text-3);margin-top:6px;">Ref: Ramírez-Campillo et al. (2013). J Strength Cond Res. / ACSM Position Stand on Exercise for Weight Management.</p>
     </div>
 
     <div class="nutr-calc">
@@ -65,43 +65,43 @@ export function renderNutrition(): void {
         <div class="calc-result"><div class="calc-result-val" id="resProt">—</div><div class="calc-result-label">g proteína</div></div>
         <div class="calc-result"><div class="calc-result-val" id="resCarb">—</div><div class="calc-result-label">g carbohidratos</div></div>
       </div>
-      <p style="font-size:11px;color:var(--text-dimmer);margin-top:10px;">Proteína: 1.8 g/kg (ISSN 2017) · Carbohidratos: resto de kcal tras proteína y 25% grasa (ACSM). Valores orientativos.</p>
+      <p style="font-size:11px;color:var(--text-3);margin-top:10px;">Proteína: 1.8 g/kg (ISSN 2017) · Carbohidratos: resto de kcal tras proteína y 25% grasa (ACSM). Valores orientativos.</p>
     </div>
 
     <div class="nutr-grid">
-      ${_card('🥩', 'Proteína', 'ISSN 2017', '1.6–2.2', 'g/kg/día', [
+      ${_card('var(--accent)', 'Proteína', 'ISSN 2017', '1.6–2.2', 'g/kg/día', [
         '<strong>Activos en general:</strong> 1.4–2.0 g/kg/día (ISSN Position Stand, Jäger et al. 2017)',
         '<strong>Maximizar síntesis proteica muscular:</strong> 1.6–2.2 g/kg/día',
         '<strong>En déficit calórico:</strong> 1.8–2.4 g/kg para preservar músculo (Helms et al. 2014)',
         '<strong>Distribución óptima:</strong> 0.3–0.4 g/kg por toma, cada 3–4 horas',
         '<strong>Post-entrenamiento:</strong> 20–40 g dentro de las 2 primeras horas',
       ])}
-      ${_card('🌾', 'Carbohidratos', 'ACSM 2016', '5–7', 'g/kg/día (entreno)', [
+      ${_card('var(--type-competition)', 'Carbohidratos', 'ACSM 2016', '5–7', 'g/kg/día (entreno)', [
         '<strong>Atletas fuerza-resistencia:</strong> 5–7 g/kg/día en días de entreno',
         '<strong>Día de competición:</strong> 7–10 g/kg el día anterior (carga de glucógeno)',
         '<strong>Pre-entreno (1–4h antes):</strong> 1–4 g/kg, fácil digestión',
         '<strong>Durante ejercicio &gt;60 min:</strong> 30–60 g/h (geles, bebida isotónica)',
         '<strong>Post-entreno (dentro de 2h):</strong> 1–1.2 g/kg + proteína',
       ])}
-      ${_card('🫒', 'Grasas', 'ACSM 2016', '20–35', '% de kcal totales', [
+      ${_card('var(--success)', 'Grasas', 'ACSM 2016', '20–35', '% de kcal totales', [
         '<strong>Rango recomendado:</strong> 20–35% de la ingesta calórica total (ACSM 2016)',
         '<strong>Mínimo:</strong> no bajar del 20% (impacto hormonal y vitaminas liposolubles)',
         '<strong>Priorizar:</strong> grasas insaturadas (MUFA y PUFA omega-3)',
         '<strong>Fuentes MUFA:</strong> aceite de oliva virgen extra, aguacate, almendras',
       ])}
-      ${_card('💧', 'Hidratación', 'ACSM 2007', '0.4–0.8', 'L/h durante ejercicio', [
+      ${_card('var(--info)', 'Hidratación', 'ACSM 2007', '0.4–0.8', 'L/h durante ejercicio', [
         '<strong>Pre-ejercicio (4h antes):</strong> 5–7 mL/kg de agua',
         '<strong>Durante el ejercicio:</strong> 400–800 mL/h',
         '<strong>Electrolitos:</strong> necesarios si el ejercicio supera 60–90 min',
         '<strong>Post-ejercicio:</strong> 1.25–1.5 L por cada kg de peso perdido',
       ])}
-      ${_card('🏁', 'Nutrición para Competición', 'ISSN 2021 · ACSM', '', '', [
+      ${_card('var(--type-cooldown)', 'Nutrición para Competición', 'ISSN 2021 · ACSM', '', '', [
         '<strong>Noche anterior:</strong> 7–10 g/kg carbohidratos, bajo en fibra y grasa',
         '<strong>3–4h antes:</strong> 1–4 g/kg carbohidratos, proteína moderada, grasa mínima',
         '<strong>1h antes:</strong> 30–60 g carbohidratos simples (plátano, gel)',
         '<strong>Post-carrera (dentro de 2h):</strong> 0.3–0.4 g/kg proteína + 1 g/kg carbohidratos',
       ])}
-      ${_card('🔥', 'Pérdida de Grasa', 'WHO/OMS · ACSM', '−500/−750', 'kcal/día (WHO)', [
+      ${_card('var(--warning)', 'Pérdida de Grasa', 'WHO/OMS · ACSM', '−500/−750', 'kcal/día (WHO)', [
         '<strong>Déficit calórico:</strong> 500–750 kcal/día → pérdida ~0.5–0.75 kg/semana',
         '<strong>Proteína en déficit:</strong> mantener 1.8–2.4 g/kg para preservar músculo',
         '<strong>Velocidad saludable:</strong> no superar 1 kg/semana',
@@ -112,16 +112,16 @@ export function renderNutrition(): void {
   $maybe('calcBtn')?.addEventListener('click', _calcNutrition);
 }
 
-function _card(icon: string, title: string, src: string, highlight: string, unit: string, items: string[]): string {
+function _card(color: string, title: string, src: string, highlight: string, unit: string, items: string[]): string {
   return `
     <div class="nutr-card">
       <div class="nutr-card-header">
-        <div class="nutr-icon">${icon}</div>
+        <div class="nutr-cat" style="background:${color};"></div>
         <h3 class="nutr-card-title">${esc(title)}</h3>
         <span class="nutr-card-src">${esc(src)}</span>
       </div>
       <div class="nutr-card-body">
-        ${highlight ? `<div class="nutr-highlight">${esc(highlight)} <span>${esc(unit)}</span></div>` : ''}
+        ${highlight ? `<div class="nutr-highlight" style="color:${color};">${esc(highlight)} <span>${esc(unit)}</span></div>` : ''}
         <ul class="nutr-list">${items.map(i => `<li>${i}</li>`).join('')}</ul>
       </div>
     </div>`;
