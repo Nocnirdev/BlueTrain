@@ -20,9 +20,6 @@ export async function renderSession(key: string): Promise<void> {
   LocalStorage.startSessionTimer(key);
   _startElapsedDisplay();
 
-  // Lazy-load exercise images
-  const { EXERCISE_IMAGES } = await import('@/data/images');
-
   let html = `
     <div class="session-timer-strip" id="sessionTimerStrip">
       <span class="session-timer-label">Sesión en curso</span>
@@ -45,7 +42,7 @@ export async function renderSession(key: string): Promise<void> {
 
   if (_firstRender) {
     html += `<div class="info-banner">
-      Visualiza la técnica de cada ejercicio con imágenes y tutoriales en vídeo.
+      Consulta los vídeos de técnica de cada ejercicio antes de empezar.
       Cuando termines, pulsa <strong>Finalizar sesión</strong> para guardar en tu historial.
     </div>`;
     _firstRender = false;
@@ -78,17 +75,11 @@ export async function renderSession(key: string): Promise<void> {
         </div>`;
     }
 
-    const blockLabel: Record<string, string> = {
-      warmup: 'CALENT.', strength: 'FUERZA',
-      competition: 'COMPET.', finisher: 'FINISHER', cooldown: 'COOLDOWN',
-    };
-
     block.items.forEach((ex, eIdx) => {
       const exId = `${key}-${bIdx}-${eIdx}`;
-      const baseQuery = (ex.searchQuery ?? ex.name + ' tutorial') + ' español 2024 2025';
-      const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery)}&hl=es&sp=EgIIBQ%3D%3D`;
-      const imgs = EXERCISE_IMAGES[ex.anim] ?? [];
-      const label = blockLabel[block.type] ?? block.type.toUpperCase();
+      const baseQuery = ex.searchQuery ?? ex.name + ' tutorial';
+      const generalUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' 2024 2025')}&sp=EgIIBQ%3D%3D`;
+      const spanishUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' en español 2024 2025')}&hl=es&sp=EgIIBQ%3D%3D`;
 
       html += `
         <div class="exercise" id="ex-${esc(exId)}" data-id="${esc(exId)}">
@@ -119,15 +110,11 @@ export async function renderSession(key: string): Promise<void> {
           </div>
           <div class="ex-details">
             <div class="anim-section">
-              ${imgs.length ? `
-              <div class="anim-stage">
-                <div class="anim-label">${esc(label)}</div>
-                <img class="ex-img" src="${imgs[0].url}" alt="${esc(imgs[0].alt)}" loading="lazy"
-                     title="${esc(imgs[0].author)} · ${esc(imgs[0].license)}">
-              </div>` : ''}
               <div class="video-actions">
-                <a class="video-btn" href="${searchUrl}"
-                   target="_blank" rel="noopener noreferrer">Ver tutorial en vídeo</a>
+                <a class="video-btn" href="${generalUrl}"
+                   target="_blank" rel="noopener noreferrer">Ver vídeo</a>
+                <a class="video-btn" href="${spanishUrl}"
+                   target="_blank" rel="noopener noreferrer">En español</a>
               </div>
             </div>
             ${ex.cues?.length ? `
