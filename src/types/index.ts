@@ -88,6 +88,8 @@ export interface Station {
   openM?: string;
   openW?: string;
   tips: string[];
+  videoUrl: string;
+  videoTitle: string;
 }
 
 // ── Auth ────────────────────────────────────────────────────

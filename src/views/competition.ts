@@ -18,6 +18,14 @@ export function renderCompetition(): void {
         <div class="weight-cell"><div class="weight-div">Open Mujeres</div><div class="weight-val">${esc(s.openW ?? '—')}</div></div>
       </div>` : ''}
       <ul class="station-tips">${s.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+      <a class="station-video-btn" href="${esc(s.videoUrl)}" target="_blank" rel="noopener noreferrer"
+         title="${esc(s.videoTitle)}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M10 8l6 4-6 4V8z"/>
+          <path fill-rule="evenodd" d="M0 12C0 5.373 5.373 0 12 0s12 5.373 12 12-5.373 12-12 12S0 18.627 0 12zm12-10C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" clip-rule="evenodd"/>
+        </svg>
+        Ver técnica en vídeo
+      </a>
     </div>`).join('');
 
   el.innerHTML = `
