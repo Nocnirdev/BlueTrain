@@ -45,11 +45,11 @@ export const EXERCISE_IMAGES: Record<string, ExerciseImage[]> = {
   }],
 
   'running': [{
-    url: 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Jogging_and_wellness.jpg',
-    alt: 'Carrera / jogging',
-    author: 'Effectzda Change',
-    license: 'CC BY-SA 4.0',
-    source: 'https://commons.wikimedia.org/wiki/File:Jogging_and_wellness.jpg',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Running_in_a_park_in_Brussels_-_2023_-_P060598-420352.jpg',
+    alt: 'Mujer corriendo al aire libre en un parque',
+    author: 'Christophe Licoppe / European Union',
+    license: 'CC BY 4.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Running_in_a_park_in_Brussels_-_2023_-_P060598-420352.jpg',
   }],
 
   'burpee': [{
@@ -109,11 +109,11 @@ export const EXERCISE_IMAGES: Record<string, ExerciseImage[]> = {
   }],
 
   'child-pose': [{
-    url: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/ChildsPose3.jpg',
-    alt: "Child's pose / postura del niño",
-    author: 'Nolabob',
-    license: 'CC BY-SA 4.0',
-    source: 'https://commons.wikimedia.org/wiki/File:ChildsPose3.jpg',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/5/55/Hatha_yoga_child_pose.jpg',
+    alt: 'Postura del niño (balasana) sobre esterilla de yoga',
+    author: 'Daniel Case',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Hatha_yoga_child_pose.jpg',
   }],
 
   'cat-cow': [{
