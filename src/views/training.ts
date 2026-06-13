@@ -45,7 +45,7 @@ export async function renderSession(key: string): Promise<void> {
 
   if (_firstRender) {
     html += `<div class="info-banner">
-      <strong>Animaciones en bucle:</strong> visualiza cada movimiento sin conexión.
+      Visualiza la técnica de cada ejercicio con imágenes y tutoriales en vídeo.
       Cuando termines, pulsa <strong>Finalizar sesión</strong> para guardar en tu historial.
     </div>`;
     _firstRender = false;
@@ -85,8 +85,8 @@ export async function renderSession(key: string): Promise<void> {
 
     block.items.forEach((ex, eIdx) => {
       const exId = `${key}-${bIdx}-${eIdx}`;
-      const query = encodeURIComponent(ex.searchQuery ?? ex.name + ' tutorial');
-      const searchUrl = `https://www.youtube.com/results?search_query=${query}`;
+      const baseQuery = (ex.searchQuery ?? ex.name + ' tutorial') + ' español 2024 2025';
+      const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery)}&hl=es&sp=EgIIBQ%3D%3D`;
       const imgs = EXERCISE_IMAGES[ex.anim] ?? [];
       const label = blockLabel[block.type] ?? block.type.toUpperCase();
 
@@ -127,9 +127,7 @@ export async function renderSession(key: string): Promise<void> {
               </div>` : ''}
               <div class="video-actions">
                 <a class="video-btn" href="${searchUrl}"
-                   target="_blank" rel="noopener noreferrer">Ver vídeo real</a>
-                <a class="video-btn" href="${searchUrl}+espa%C3%B1ol"
-                   target="_blank" rel="noopener noreferrer">En español</a>
+                   target="_blank" rel="noopener noreferrer">Ver tutorial en vídeo</a>
               </div>
             </div>
             ${ex.cues?.length ? `

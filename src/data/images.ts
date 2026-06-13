@@ -203,4 +203,100 @@ export const EXERCISE_IMAGES: Record<string, ExerciseImage[]> = {
     license: 'Public Domain',
     source: 'https://commons.wikimedia.org/wiki/File:Staying_%27kid%27_fit_all_spring_long_140317-M-TH981-003.jpg',
   }],
+
+  'breathing': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Diaphragmatic_breathing.gif',
+    alt: 'Respiración diafragmática — movimiento del diafragma al inhalar y exhalar',
+    author: 'John Pierce',
+    license: 'CC0 1.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Diaphragmatic_breathing.gif',
+  }],
+
+  'db-row': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Rear_deltoid_row_dumbbell_1.svg',
+    alt: 'Remo con mancuerna (rear deltoid row)',
+    author: 'Everkinetic',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Rear_deltoid_row_dumbbell_1.svg',
+  }],
+
+  'glute-bridge': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Glute-bridge.png',
+    alt: 'Puente de glúteos (glute bridge)',
+    author: 'Marianne Gilbak',
+    license: 'CC BY-SA 4.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Glute-bridge.png',
+  }],
+
+  'hammer-curl': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Alternating_hammer_curl_with_dumbbell_1.svg',
+    alt: 'Hammer curl alternado con mancuerna',
+    author: 'Everkinetic',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Alternating_hammer_curl_with_dumbbell_1.svg',
+  }],
+
+  'jump-rope': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/6/67/Man_Jumping_Rope_%28Lincoln_Road_Mall%29.jpg',
+    alt: 'Salto a la comba / cuerda',
+    author: 'Tamanoeconomico',
+    license: 'CC BY-SA 4.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Man_Jumping_Rope_(Lincoln_Road_Mall).jpg',
+  }],
+
+  'scap-pullup': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/4/40/Pullup.gif',
+    alt: 'Scapular pull-up desde dead hang',
+    author: 'Extremistpullup',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Pullup.gif',
+  }],
+
+  'ski-erg': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/a/a3/CrossFit_workout_on_SkiErg_DSC1807.jpg',
+    alt: 'Atleta en máquina SkiErg CrossFit',
+    author: 'Kiet Le',
+    license: 'CC BY 2.0',
+    source: 'https://commons.wikimedia.org/wiki/File:CrossFit_workout_on_SkiErg_DSC1807.jpg',
+  }],
+
+  'ski-erg-warm': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/CWV_%28562_of_13%29_-_FRIYAY_Roux_Fitness%2C_Jefferson_Louisiana_April_2022.jpg',
+    alt: 'Calentamiento en SkiErg en gimnasio CrossFit',
+    author: 'Colin Van Dervort',
+    license: 'CC BY 2.0',
+    source: 'https://commons.wikimedia.org/wiki/File:CWV_(562_of_13)_-_FRIYAY_Roux_Fitness,_Jefferson_Louisiana_April_2022.jpg',
+  }],
+
+  'sl-deadlift': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Romanian-deadlift-1.png',
+    alt: 'Peso muerto rumano / single leg deadlift',
+    author: 'Everkinetic',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Romanian-deadlift-1.png',
+  }],
+
+  'sled-pull': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Chicago_2021_US_Championships_sled_push.png',
+    alt: 'Sled push/pull en competición HYROX Chicago 2021',
+    author: 'HybridFitty',
+    license: 'CC BY 4.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Chicago_2021_US_Championships_sled_push.png',
+  }],
+
+  'supine-twist': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/5/55/Waist_Rotating_Pose.jpg',
+    alt: 'Torsión espinal reclinada (supine twist)',
+    author: 'Satheesan.vn',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Waist_Rotating_Pose.jpg',
+  }],
+
+  'tricep-extension': [{
+    url: 'https://upload.wikimedia.org/wikipedia/commons/7/77/Standing-overhead-triceps-extension-1.gif',
+    alt: 'Extensión de tríceps por encima de la cabeza',
+    author: 'Everkinetic',
+    license: 'CC BY-SA 3.0',
+    source: 'https://commons.wikimedia.org/wiki/File:Standing-overhead-triceps-extension-1.gif',
+  }],
 };
