@@ -20,8 +20,8 @@ export async function renderSession(key: string): Promise<void> {
   LocalStorage.startSessionTimer(key);
   _startElapsedDisplay();
 
-  // Lazy-load animations solo cuando se abre el entrenamiento
-  const { ANIMS } = await import('@/data/animations');
+  // Lazy-load exercise images
+  const { EXERCISE_IMAGES } = await import('@/data/images');
 
   let html = `
     <div class="session-timer-strip" id="sessionTimerStrip">
@@ -87,7 +87,7 @@ export async function renderSession(key: string): Promise<void> {
       const exId = `${key}-${bIdx}-${eIdx}`;
       const query = encodeURIComponent(ex.searchQuery ?? ex.name + ' tutorial');
       const searchUrl = `https://www.youtube.com/results?search_query=${query}`;
-      const animSvg = ANIMS[ex.anim] ?? ANIMS['generic'] ?? '';
+      const imgs = EXERCISE_IMAGES[ex.anim] ?? [];
       const label = blockLabel[block.type] ?? block.type.toUpperCase();
 
       html += `
@@ -119,10 +119,12 @@ export async function renderSession(key: string): Promise<void> {
           </div>
           <div class="ex-details">
             <div class="anim-section">
+              ${imgs.length ? `
               <div class="anim-stage">
                 <div class="anim-label">${esc(label)}</div>
-                ${animSvg}
-              </div>
+                <img class="ex-img" src="${imgs[0].url}" alt="${esc(imgs[0].alt)}" loading="lazy"
+                     title="${esc(imgs[0].author)} · ${esc(imgs[0].license)}">
+              </div>` : ''}
               <div class="video-actions">
                 <a class="video-btn" href="${searchUrl}"
                    target="_blank" rel="noopener noreferrer">Ver vídeo real</a>
