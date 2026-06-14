@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { LocalStorage } from './storage';
 import { Auth } from './auth';
-import type { SessionEntry, WorkoutProgress } from '@/types';
+import type { SessionEntry, WorkoutProgress, WeightEntry } from '@/types';
 
 // ── Capa de datos unificada ───────────────────────────────────
 // Si el usuario está autenticado → Supabase.
@@ -131,6 +131,49 @@ export const DB = {
     return (data ?? []).reduce((sum, r) => sum + ((r.duration as number) || 0), 0);
   },
 
+  // ── Seguimiento de pesos ─────────────────────────────────
+
+  async getAllWeightHistory(): Promise<Record<string, WeightEntry[]>> {
+    const { userId } = Auth.getState();
+    if (!userId) return LocalStorage.getAllWeightLog();
+
+    const { data, error } = await supabase
+      .from('weight_logs')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date', { ascending: false })
+      .order('recorded_at', { ascending: false })
+      .limit(500);
+
+    if (error) { console.error('DB.getAllWeightHistory:', error); return LocalStorage.getAllWeightLog(); }
+
+    const result: Record<string, WeightEntry[]> = {};
+    (data ?? []).forEach(row => {
+      const key = row['exercise_key'] as string;
+      if (!result[key]) result[key] = [];
+      result[key]!.push(_weightFromRow(row));
+    });
+    return result;
+  },
+
+  async addWeightEntry(entry: WeightEntry): Promise<void> {
+    LocalStorage.addWeightEntry(entry);
+
+    const { userId } = Auth.getState();
+    if (!userId) return;
+
+    const { error } = await supabase.from('weight_logs').insert({
+      id:           entry.id,
+      user_id:      userId,
+      exercise_key: entry.exerciseKey,
+      date:         entry.date,
+      weight:       entry.weight,
+      session_key:  entry.sessionKey ?? null,
+      recorded_at:  entry.recordedAt,
+    });
+    if (error) console.error('DB.addWeightEntry:', error);
+  },
+
   // ── Migración localStorage → Supabase ────────────────────
 
   async migrateLocalData(): Promise<number> {
@@ -147,6 +190,17 @@ export const DB = {
 };
 
 // ── Conversores ───────────────────────────────────────────────
+
+function _weightFromRow(row: Record<string, unknown>): WeightEntry {
+  return {
+    id:          row['id'] as string,
+    exerciseKey: row['exercise_key'] as string,
+    date:        row['date'] as string,
+    weight:      Number(row['weight']),
+    sessionKey:  (row['session_key'] as string | null) ?? undefined,
+    recordedAt:  row['recorded_at'] as string,
+  };
+}
 
 function _toRow(s: SessionEntry, userId: string) {
   return {

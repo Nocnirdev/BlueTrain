@@ -92,6 +92,17 @@ export interface Station {
   videoTitle: string;
 }
 
+// ── Weight tracking ─────────────────────────────────────────
+
+export interface WeightEntry {
+  id: string;
+  exerciseKey: string;   // stable slug, e.g. 'back-squat'
+  date: string;          // YYYY-MM-DD
+  weight: number;        // kg
+  sessionKey?: string;   // e.g. 'A1'
+  recordedAt: string;    // ISO datetime
+}
+
 // ── Auth ────────────────────────────────────────────────────
 
 export interface AuthState {

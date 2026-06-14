@@ -30,15 +30,29 @@ CREATE TABLE IF NOT EXISTS public.workout_progress (
   UNIQUE(user_id, session_key)
 );
 
+-- Tabla: seguimiento de pesos por ejercicio
+CREATE TABLE IF NOT EXISTS public.weight_logs (
+  id           TEXT         PRIMARY KEY,
+  user_id      UUID         NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  exercise_key TEXT         NOT NULL,
+  date         DATE         NOT NULL DEFAULT CURRENT_DATE,
+  weight       NUMERIC(6,2) NOT NULL CHECK (weight > 0 AND weight < 1000),
+  session_key  TEXT,
+  recorded_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
 -- Índices de rendimiento
 CREATE INDEX IF NOT EXISTS idx_sessions_user_date    ON public.sessions(user_id, date DESC);
 CREATE INDEX IF NOT EXISTS idx_sessions_user_type    ON public.sessions(user_id, type);
-CREATE INDEX IF NOT EXISTS idx_progress_user_session ON public.workout_progress(user_id, session_key);
+CREATE INDEX IF NOT EXISTS idx_progress_user_session  ON public.workout_progress(user_id, session_key);
+CREATE INDEX IF NOT EXISTS idx_weights_user_key      ON public.weight_logs(user_id, exercise_key);
+CREATE INDEX IF NOT EXISTS idx_weights_user_date     ON public.weight_logs(user_id, date DESC);
 
 -- ── Row Level Security ──────────────────────────────────────────
 
-ALTER TABLE public.sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sessions       ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workout_progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.weight_logs    ENABLE ROW LEVEL SECURITY;
 
 -- Sessions: cada usuario solo ve y modifica sus datos
 CREATE POLICY "sessions_select" ON public.sessions
@@ -48,6 +62,16 @@ CREATE POLICY "sessions_insert" ON public.sessions
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 CREATE POLICY "sessions_delete" ON public.sessions
+  FOR DELETE USING (auth.uid() = user_id);
+
+-- Weight logs: ídem
+CREATE POLICY "weights_select" ON public.weight_logs
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "weights_insert" ON public.weight_logs
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "weights_delete" ON public.weight_logs
   FOR DELETE USING (auth.uid() = user_id);
 
 -- Workout progress: ídem

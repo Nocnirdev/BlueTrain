@@ -1,4 +1,4 @@
-import type { UserProfile, SessionEntry, WorkoutProgress, SessionTimer } from '@/types';
+import type { UserProfile, SessionEntry, WorkoutProgress, SessionTimer, WeightEntry } from '@/types';
 
 // Capa de persistencia local (localStorage).
 // Usada como caché offline y para usuarios no autenticados.
@@ -10,6 +10,7 @@ const KEYS = {
   WORKOUT_PROGRESS: 'bt_workout_progress',
   SESSION_START:    'bt_session_start',
   PERF_PREFIX:      'bt_perf_',
+  WEIGHT_LOG:       'bt_weights',
 } as const;
 
 function get<T>(key: string): T | null {
@@ -128,6 +129,28 @@ export const LocalStorage = {
 
   getTotalMinutes(): number {
     return this.getHistory().reduce((sum, s) => sum + (s.duration || 0), 0);
+  },
+
+  // ── Seguimiento de pesos ─────────────────────────────────
+
+  getAllWeightLog(): Record<string, WeightEntry[]> {
+    return get<Record<string, WeightEntry[]>>(KEYS.WEIGHT_LOG) ?? {};
+  },
+
+  getWeightHistory(exerciseKey: string): WeightEntry[] {
+    return this.getAllWeightLog()[exerciseKey] ?? [];
+  },
+
+  addWeightEntry(entry: WeightEntry): void {
+    const all = this.getAllWeightLog();
+    const arr = all[entry.exerciseKey] ?? [];
+    arr.unshift(entry);
+    all[entry.exerciseKey] = arr.slice(0, 200);
+    set(KEYS.WEIGHT_LOG, all);
+  },
+
+  clearWeightLog(): void {
+    remove(KEYS.WEIGHT_LOG);
   },
 
   // ── Exportar todo (migración a Supabase) ─────────────────

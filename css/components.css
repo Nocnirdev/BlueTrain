@@ -706,6 +706,181 @@
 }
 .cues li::marker { color: var(--accent); }
 
+/* ── Weight tracker ─────────────────────────────────────── */
+
+.wt-tracker {
+  margin: var(--space-3) 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface-1);
+}
+
+.wt-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.wt-card-left { flex: 1; }
+.wt-card-right { text-align: right; }
+
+.wt-label {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-1);
+}
+
+.wt-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.wt-delta {
+  font-size: var(--text-xs);
+  margin-top: 5px;
+  font-weight: 500;
+}
+.wt-up   { color: var(--success); }
+.wt-down { color: var(--error); }
+.wt-same { color: var(--text-3); }
+
+.wt-record {
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  margin-top: var(--space-1);
+}
+
+.wt-input-row {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.wt-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-base);
+  padding: 8px var(--space-3);
+  outline: none;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+.wt-input::-webkit-inner-spin-button,
+.wt-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.wt-input:focus  { border-color: var(--accent); }
+.wt-input::placeholder { color: var(--text-3); }
+
+.wt-save-btn {
+  flex-shrink: 0;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  padding: 8px var(--space-4);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.wt-save-btn:active { opacity: 0.8; }
+
+.wt-hist-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  color: var(--text-3);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: color 0.15s;
+}
+.wt-hist-btn:hover { color: var(--text-2); }
+.wt-hist-btn svg { transition: transform 0.2s; flex-shrink: 0; }
+.wt-hist-btn.open svg { transform: rotate(180deg); }
+
+.wt-hist-panel {
+  border-top: 1px solid var(--border);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+
+.wt-chart-wrap {
+  margin-bottom: var(--space-3);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-2) var(--space-1);
+  overflow: hidden;
+}
+
+.wt-chart-svg {
+  width: 100%;
+  height: 56px;
+  display: block;
+}
+
+.wt-chart-empty {
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  text-align: center;
+  padding: var(--space-4) 0 var(--space-2);
+  margin: 0;
+}
+
+.wt-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.wt-table th {
+  font-size: 10px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0 0 var(--space-2) 0;
+  text-align: left;
+  font-weight: 500;
+}
+.wt-table td {
+  padding: 5px 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+}
+.wt-table tbody tr:last-child td { border-bottom: none; }
+.wt-table td:first-child { color: var(--text-3); font-size: var(--text-xs); }
+.wt-table td:nth-child(2) { color: var(--text); font-weight: 600; }
+
+.wt-empty {
+  font-size: var(--text-xs);
+  color: var(--text-3);
+  text-align: center;
+  padding: var(--space-3) 0;
+  margin: 0;
+}
+
 /* ── Section hero ───────────────────────────────────────── */
 
 .section-hero {

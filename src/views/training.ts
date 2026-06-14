@@ -1,12 +1,19 @@
 import { WORKOUTS_DATA } from '@/data/workouts';
+import { getWeightKey } from '@/data/weight-keys';
 import { DB } from '@/services/db';
 import { LocalStorage } from '@/services/storage';
 import { showToast } from '@/components/toast';
 import { esc, $maybe } from '@/lib/html';
+import type { WeightEntry } from '@/types';
 
 let _currentSession = 'A1';
 let _firstRender = true;
 let _elapsedInterval: ReturnType<typeof setInterval> | null = null;
+let _wtCache: Record<string, WeightEntry[]> = {};
+
+function _fmtKg(w: number): string {
+  return (w % 1 === 0 ? w.toFixed(0) : w.toFixed(1)).replace('.', ',') + ' kg';
+}
 
 export async function renderSession(key: string): Promise<void> {
   _currentSession = key;
@@ -80,6 +87,7 @@ export async function renderSession(key: string): Promise<void> {
       const baseQuery = ex.searchQuery ?? ex.name + ' tutorial';
       const generalUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' 2024 2025')}&sp=EgIIBQ%3D%3D`;
       const spanishUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' en español 2024 2025')}&hl=es&sp=EgIIBQ%3D%3D`;
+      const weightKey  = getWeightKey(ex.name);
 
       html += `
         <div class="exercise" id="ex-${esc(exId)}" data-id="${esc(exId)}">
@@ -117,6 +125,33 @@ export async function renderSession(key: string): Promise<void> {
                    target="_blank" rel="noopener noreferrer">En español</a>
               </div>
             </div>
+            ${weightKey ? `
+            <div class="wt-tracker" data-wkey="${esc(weightKey)}">
+              <div class="wt-card">
+                <div class="wt-card-left">
+                  <div class="wt-label">Último peso</div>
+                  <div class="wt-value">—</div>
+                  <div class="wt-delta"></div>
+                </div>
+                <div class="wt-card-right">
+                  <div class="wt-record"></div>
+                </div>
+              </div>
+              <div class="wt-input-row">
+                <input class="wt-input" type="number" step="0.5" min="0.5" max="999"
+                       placeholder="kg" inputmode="decimal"
+                       aria-label="Peso en kg para ${esc(ex.name)}">
+                <button class="wt-save-btn">Guardar</button>
+              </div>
+              <button class="wt-hist-btn" aria-expanded="false">
+                Historial
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+              <div class="wt-hist-panel" hidden></div>
+            </div>` : ''}
             ${ex.cues?.length ? `
               <div class="cues">
                 <div class="cues-title">Puntos clave</div>
@@ -138,6 +173,7 @@ export async function renderSession(key: string): Promise<void> {
 
   _attachExerciseListeners(main);
   await _loadProgress();
+  await _loadWeightData();
   _updateProgress();
   _startElapsedDisplay();
 }
@@ -166,6 +202,62 @@ function _attachExerciseListeners(container: HTMLElement): void {
 
   container.querySelector('#finishBtn')?.addEventListener('click', () => {
     _openLogModal(_currentSession);
+  });
+
+  // Weight tracker — guardar peso
+  container.querySelectorAll<HTMLElement>('.wt-save-btn').forEach(btn => {
+    const tracker = btn.closest<HTMLElement>('.wt-tracker');
+    if (!tracker) return;
+    btn.addEventListener('click', async () => {
+      const key = tracker.dataset['wkey'] ?? '';
+      const inp = tracker.querySelector<HTMLInputElement>('.wt-input');
+      if (!inp) return;
+      const raw = parseFloat(inp.value.replace(',', '.'));
+      if (!raw || raw <= 0 || raw >= 1000) { showToast('Introduce un peso válido', 'error'); return; }
+
+      const entry: WeightEntry = {
+        id:          Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        exerciseKey: key,
+        date:        new Date().toISOString().split('T')[0] ?? '',
+        weight:      raw,
+        sessionKey:  _currentSession,
+        recordedAt:  new Date().toISOString(),
+      };
+
+      await DB.addWeightEntry(entry);
+      inp.value = '';
+
+      // Actualiza caché y la tarjeta
+      const arr = _wtCache[key] ?? [];
+      arr.unshift(entry);
+      _wtCache[key] = arr;
+      _updateWeightCardEl(tracker, arr);
+
+      // Si el historial está abierto, refresca su contenido
+      const panel = tracker.querySelector<HTMLElement>('.wt-hist-panel');
+      if (panel && !panel.hidden) panel.innerHTML = _renderHistPanel(arr);
+
+      showToast('Peso guardado');
+    });
+  });
+
+  // Weight tracker — historial toggle
+  container.querySelectorAll<HTMLElement>('.wt-hist-btn').forEach(btn => {
+    const tracker = btn.closest<HTMLElement>('.wt-tracker');
+    if (!tracker) return;
+    btn.addEventListener('click', () => {
+      const panel = tracker.querySelector<HTMLElement>('.wt-hist-panel');
+      if (!panel) return;
+      const open = panel.hidden;
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.classList.toggle('open', open);
+      if (open && !panel.dataset['loaded']) {
+        panel.dataset['loaded'] = '1';
+        const key = tracker.dataset['wkey'] ?? '';
+        panel.innerHTML = _renderHistPanel(_wtCache[key] ?? []);
+      }
+    });
   });
 }
 
@@ -307,6 +399,122 @@ export function saveLoggedSession(): void {
     showToast('Sesión guardada en tu historial');
     document.dispatchEvent(new CustomEvent('bt:sessionSaved'));
   });
+}
+
+// ── Weight tracker helpers ────────────────────────────────────
+
+async function _loadWeightData(): Promise<void> {
+  const trackers = document.querySelectorAll<HTMLElement>('.wt-tracker');
+  if (!trackers.length) return;
+  _wtCache = await DB.getAllWeightHistory();
+  trackers.forEach(t => {
+    const key = t.dataset['wkey'];
+    if (key) _updateWeightCardEl(t, _wtCache[key] ?? []);
+  });
+}
+
+function _updateWeightCardEl(tracker: HTMLElement, history: WeightEntry[]): void {
+  const valEl   = tracker.querySelector('.wt-value');
+  const deltaEl = tracker.querySelector('.wt-delta');
+  const recEl   = tracker.querySelector('.wt-record');
+  const inp     = tracker.querySelector<HTMLInputElement>('.wt-input');
+
+  if (!history.length) return;
+
+  const last = history[0]!;
+  const prev = history[1];
+
+  if (valEl)  valEl.textContent  = _fmtKg(last.weight);
+  if (inp)    inp.placeholder    = _fmtKg(last.weight);
+
+  if (deltaEl) {
+    if (prev) {
+      const diff = last.weight - prev.weight;
+      if (diff > 0) {
+        deltaEl.textContent = `▲ +${_fmtKg(diff)}`;
+        deltaEl.className = 'wt-delta wt-up';
+      } else if (diff < 0) {
+        deltaEl.textContent = `▼ −${_fmtKg(Math.abs(diff))}`;
+        deltaEl.className = 'wt-delta wt-down';
+      } else {
+        deltaEl.textContent = '= Sin cambios';
+        deltaEl.className = 'wt-delta wt-same';
+      }
+    } else {
+      deltaEl.textContent = 'Primera sesión registrada';
+      deltaEl.className = 'wt-delta wt-same';
+    }
+  }
+
+  if (recEl && history.length > 1) {
+    const max = Math.max(...history.map(e => e.weight));
+    recEl.textContent = `Récord: ${_fmtKg(max)}`;
+  }
+}
+
+function _miniChart(entries: WeightEntry[]): string {
+  if (entries.length < 2) {
+    return `<p class="wt-chart-empty">Registra al menos 2 sesiones para ver la tendencia.</p>`;
+  }
+  const W = 220, H = 56, pad = 8;
+  const weights = entries.map(e => e.weight);
+  const minW = Math.min(...weights);
+  const maxW = Math.max(...weights);
+  const range = maxW - minW || 1;
+
+  const pts = entries.map((e, i) => {
+    const x = (pad + (i / (entries.length - 1)) * (W - pad * 2)).toFixed(1);
+    const y = ((H - pad) - ((e.weight - minW) / range) * (H - pad * 2)).toFixed(1);
+    return `${x},${y}`;
+  }).join(' ');
+
+  const dots = entries.map((e, i) => {
+    const x = (pad + (i / (entries.length - 1)) * (W - pad * 2)).toFixed(1);
+    const y = ((H - pad) - ((e.weight - minW) / range) * (H - pad * 2)).toFixed(1);
+    return `<circle cx="${x}" cy="${y}" r="2.5" fill="var(--accent)"/>`;
+  }).join('');
+
+  return `<svg class="wt-chart-svg" viewBox="0 0 ${W} ${H}" aria-hidden="true">
+    <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="1.5"
+      stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}
+  </svg>`;
+}
+
+function _renderHistPanel(history: WeightEntry[]): string {
+  if (!history.length) return '<p class="wt-empty">Sin registros aún. Guarda tu primer peso arriba.</p>';
+
+  const fmtDate = (d: string): string => {
+    const parts = d.split('-');
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  };
+
+  const rows = history.slice(0, 15).map((e, i) => {
+    const prev = history[i + 1];
+    let delta = '';
+    if (prev) {
+      const diff = e.weight - prev.weight;
+      if (diff > 0)       delta = `<span class="wt-up">▲ +${_fmtKg(diff)}</span>`;
+      else if (diff < 0)  delta = `<span class="wt-down">▼ −${_fmtKg(Math.abs(diff))}</span>`;
+      else                delta = `<span class="wt-same">=</span>`;
+    }
+    return `<tr>
+      <td>${fmtDate(e.date)}</td>
+      <td>${_fmtKg(e.weight)}</td>
+      <td>${delta}</td>
+    </tr>`;
+  }).join('');
+
+  // Chart uses ascending order (oldest → newest)
+  const chartEntries = [...history].reverse();
+  const chart = _miniChart(chartEntries);
+
+  return `
+    <div class="wt-chart-wrap">${chart}</div>
+    <table class="wt-table">
+      <thead><tr><th>Fecha</th><th>Peso</th><th>Variación</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 import type { SessionEntry } from '@/types';
