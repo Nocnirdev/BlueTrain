@@ -36,7 +36,6 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 ### Entrenamiento
 - **7 sesiones** organizadas en 3 mesociclos (Base · Intensificación · Peaking)
 - Periodización científica basada en NSCA: progresión de %1RM por semana
-- **40+ animaciones SVG** de stick figures para cada ejercicio — sin conexión
 - **134 ejercicios** con 4–6 puntos clave técnicos detallados en español por ejercicio
 - Temporizador de descanso con audio (Web Audio API) y vibración
 - Bloque de competición en cada sesión con protocolo AMRAP / For Time / EMOM
@@ -74,56 +73,6 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 
 ---
 
-## Instalación local
-
-### 1. Clonar y dependencias
-
-```bash
-git clone https://github.com/Nocnirdev/BlueTrain.git
-cd BlueTrain
-npm install
-```
-
-### 2. Crear proyecto en Supabase
-
-1. Ve a [supabase.com](https://supabase.com) y crea un proyecto nuevo
-2. En el SQL Editor, ejecuta el contenido de [`supabase/schema.sql`](supabase/schema.sql)
-3. En **Settings → API Keys → Legacy**, copia la `Project URL` y la `anon` key
-
-### 3. Variables de entorno
-
-```bash
-cp .env.example .env
-```
-
-Edita `.env`:
-
-```env
-VITE_SUPABASE_URL=https://xxxxxxxxxxxxxxxxxxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-### 4. Arrancar
-
-```bash
-npm run dev
-```
-
-La app estará disponible en `http://localhost:5173`.
-
----
-
-## Scripts disponibles
-
-```bash
-npm run dev        # Servidor de desarrollo con HMR
-npm run build      # Build de producción (TypeScript + Vite)
-npm run preview    # Preview del build de producción
-npm run typecheck  # Verificación de tipos sin compilar
-```
-
----
-
 ## Estructura del proyecto
 
 ```
@@ -141,8 +90,7 @@ BlueTrain/
 │   ├── data/
 │   │   ├── workouts.ts         # 7 sesiones, 3 mesociclos, 134 ejercicios (tipado)
 │   │   ├── weight-keys.ts      # Mapa de nombres → claves estables para tracker de peso
-│   │   ├── stations.ts         # 8 estaciones de carrera funcional
-│   │   └── animations.ts       # 40+ SVG stick figures
+│   │   └── stations.ts         # 8 estaciones de carrera funcional
 │   ├── components/
 │   │   ├── toast.ts            # Notificaciones (success / error / info)
 │   │   └── dialog.ts           # Confirm dialog — reemplaza window.confirm()
@@ -213,36 +161,6 @@ weight_logs (
 | A3 | Peaking (sem. 9–12) | Pico fuerza · PAP · Race intervals |
 
 Periodización basada en NSCA — Essentials of Strength Training and Conditioning (4ª ed.).
-
----
-
-## Fuentes científicas
-
-| Área | Fuente |
-|------|--------|
-| Periodización | NSCA — Essentials of Strength Training and Conditioning (4th ed.) |
-| Volumen e intensidad | ACSM — Guidelines for Exercise Testing and Prescription (11th ed.) |
-| Proteína | ISSN Position Stand 2017 — Jäger et al. |
-| Carbohidratos y grasas | ACSM/ADA/DC Joint Position Statement 2016 |
-| Hidratación | ACSM Position Stand 2007 — Exercise and Fluid Replacement |
-| Déficit calórico | WHO/OMS — Obesity: Preventing and Managing |
-| Calculadora BMR | Mifflin-St Jeor / Harris et al. (1990) — validada ACSM |
-| Grasa localizada | Ramírez-Campillo et al. (2013) — J Strength Cond Res |
-
----
-
-## Deploy
-
-El build de producción genera un directorio `dist/` estático con Service Worker incluido.
-
-**Vercel (recomendado):**
-```bash
-# Conectar el repositorio en vercel.com
-# Build Command: npm run build
-# Output Directory: dist
-```
-
-Añadir las variables de entorno `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el panel de Vercel.
 
 ---
 
