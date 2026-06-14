@@ -1,6 +1,10 @@
 # BlueTrain
 
-**Plataforma SaaS de entrenamiento funcional.** Plan de 3 mesociclos progresivos, tracking de rendimiento por usuario, nutrición basada en evidencia científica y simulación de carrera por estaciones.
+**Aplicación web de entrenamiento funcional.** Plan de 3 mesociclos progresivos, tracking de rendimiento por usuario, seguimiento de cargas por ejercicio, nutrición basada en evidencia científica y simulación de carrera por estaciones.
+
+> Proyecto personal educativo y de formación, sin ánimo de lucro.
+
+🌐 **Demo en producción:** [blue-train.vercel.app](https://blue-train.vercel.app)
 
 ---
 
@@ -13,7 +17,7 @@
 | Auth + DB | Supabase (PostgreSQL + Row Level Security) |
 | Offline | PWA — Service Worker (Workbox) |
 | Estilos | CSS custom — design system propio, dark mode |
-| Deploy | Cualquier hosting estático (Vercel, Netlify, Cloudflare Pages) |
+| Deploy | Vercel |
 
 Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en capas y cero dependencias de runtime más allá del SDK de Supabase.
 
@@ -21,20 +25,31 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 
 ## Funcionalidades
 
+### Dashboard
+- Saludo personalizado con mensaje motivacional según racha y sesiones
+- **Estadísticas en tiempo real:** sesiones totales, sesiones semanales, racha de días, tiempo acumulado
+- **Accesos rápidos:** navegación directa a Entrena, Competición, Nutrición e Historial
+- **Progreso comparativo:** sesiones de esta semana vs semana anterior, este mes vs mes anterior, este año vs año anterior (con % de variación)
+- Gráfico de actividad semanal (L–D)
+- Último entrenamiento y feed de actividad reciente
+
 ### Entrenamiento
 - **7 sesiones** organizadas en 3 mesociclos (Base · Intensificación · Peaking)
 - Periodización científica basada en NSCA: progresión de %1RM por semana
 - **40+ animaciones SVG** de stick figures para cada ejercicio — sin conexión
+- **134 ejercicios** con 4–6 puntos clave técnicos detallados en español por ejercicio
 - Temporizador de descanso con audio (Web Audio API) y vibración
-- Puntos clave técnicos por ejercicio
 - Bloque de competición en cada sesión con protocolo AMRAP / For Time / EMOM
+- Checkboxes de progreso por ejercicio sincronizados con Supabase
+- Botones de vídeo por ejercicio: búsqueda general + versión en español (sin filtros de año)
 
-### Tracking
-- Registro de sesiones: duración real, RPE 1–10, notas y cargas principales
-- Dashboard con estadísticas: sesiones totales, racha de días, tiempo acumulado
-- Gráfico de actividad semanal
-- Historial completo con filtros por tipo (fuerza / funcional)
-- Sincronización entre dispositivos vía Supabase
+### Seguimiento de cargas
+- **Tracker de peso integrado** en cada ejercicio con carga externa (barbell, dumbbells, KB, wall ball, sandbag, farmer carry, etc.)
+- Muestra el último peso utilizado, delta respecto a la sesión anterior (▲▼=) y récord personal
+- Input para registrar nuevo peso con validación
+- Historial por ejercicio: mini gráfico SVG de evolución + tabla de las últimas 15 entradas
+- Almacenamiento en Supabase (`weight_logs`) con fallback a localStorage offline
+- 18 ejercicios con clave estable para trazabilidad histórica
 
 ### Competición
 - Guía completa de las 8 estaciones de carrera funcional por estaciones
@@ -44,14 +59,16 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 
 ### Nutrición
 - Calculadora de necesidades calóricas (Mifflin-St Jeor — ACSM)
+- El objetivo del perfil del usuario **pre-rellena automáticamente** la calculadora
 - Guías de proteína, carbohidratos, grasas e hidratación
 - Protocolo nutricional pre/durante/post competición
 - Todo respaldado por fuentes científicas: ISSN, ACSM, WHO/OMS, NSCA
 
-### SaaS / Auth
+### Auth y perfil
 - Registro y login por email
 - Recuperación de contraseña
-- Perfil de usuario con nivel y objetivo
+- Perfil de usuario con nombre y objetivo de entrenamiento
+- Estadísticas del perfil: sesiones, racha y tiempo total
 - Migración automática de datos locales al crear cuenta
 - Cada usuario solo accede a sus propios datos (RLS en PostgreSQL)
 
@@ -71,7 +88,7 @@ npm install
 
 1. Ve a [supabase.com](https://supabase.com) y crea un proyecto nuevo
 2. En el SQL Editor, ejecuta el contenido de [`supabase/schema.sql`](supabase/schema.sql)
-3. En **Project Settings → API**, copia la `Project URL` y la `anon public` key
+3. En **Settings → API Keys → Legacy**, copia la `Project URL` y la `anon` key
 
 ### 3. Variables de entorno
 
@@ -113,38 +130,39 @@ npm run typecheck  # Verificación de tipos sin compilar
 BlueTrain/
 ├── src/
 │   ├── types/
-│   │   └── index.ts            # Todos los tipos TypeScript (UserProfile, SessionEntry…)
+│   │   └── index.ts            # Tipos TypeScript: UserProfile, SessionEntry, WeightEntry…
 │   ├── lib/
-│   │   ├── supabase.ts         # Cliente Supabase
+│   │   ├── supabase.ts         # Cliente Supabase (singleton)
 │   │   └── html.ts             # esc() XSS sanitizer + helpers DOM
 │   ├── services/
 │   │   ├── auth.ts             # Auth service (signup, login, logout, profile)
 │   │   ├── db.ts               # DB service (Supabase con fallback localStorage)
 │   │   └── storage.ts          # Capa localStorage (caché offline)
 │   ├── data/
-│   │   ├── workouts.ts         # 7 sesiones, 3 mesociclos (tipado)
+│   │   ├── workouts.ts         # 7 sesiones, 3 mesociclos, 134 ejercicios (tipado)
+│   │   ├── weight-keys.ts      # Mapa de nombres → claves estables para tracker de peso
 │   │   ├── stations.ts         # 8 estaciones de carrera funcional
-│   │   └── animations.ts       # 40+ SVG stick figures (lazy-loaded)
+│   │   └── animations.ts       # 40+ SVG stick figures
 │   ├── components/
 │   │   ├── toast.ts            # Notificaciones (success / error / info)
 │   │   └── dialog.ts           # Confirm dialog — reemplaza window.confirm()
 │   ├── views/
 │   │   ├── auth.ts             # Login / signup / forgot password
-│   │   ├── dashboard.ts        # Dashboard con stats y actividad reciente
-│   │   ├── training.ts         # Sesiones de entrenamiento + log modal
+│   │   ├── dashboard.ts        # Dashboard: stats, accesos rápidos, progreso, actividad
+│   │   ├── training.ts         # Sesiones + log modal + tracker de pesos por ejercicio
 │   │   ├── competition.ts      # Guía de estaciones
 │   │   ├── nutrition.ts        # Nutrición + calculadora Mifflin-St Jeor
 │   │   ├── history.ts          # Historial con filtros
-│   │   ├── profile.ts          # Perfil de usuario
+│   │   ├── profile.ts          # Modal de perfil
 │   │   └── timer.ts            # Temporizador de descanso
 │   ├── app.ts                  # Orquestación: router, auth gate, event bus
 │   └── main.ts                 # Entry point — importa CSS y arranca app
 ├── css/
 │   ├── main.css                # Design tokens, reset, layout, header
 │   ├── components.css          # Componentes UI + animaciones CSS keyframes
-│   ├── tracker.css             # Dashboard, historial, modales
+│   ├── tracker.css             # Dashboard, historial, modales, tracker de pesos
 │   ├── responsive.css          # Media queries, reduced-motion, iOS safe area
-│   └── auth.css                # Pantalla de auth, skeletons, toast types
+│   └── auth.css                # Pantalla de auth
 ├── public/
 │   └── manifest.json           # PWA manifest
 ├── supabase/
@@ -158,7 +176,7 @@ BlueTrain/
 
 ## Base de datos
 
-Dos tablas en PostgreSQL con Row Level Security activado:
+Tres tablas en PostgreSQL con Row Level Security activado. Cada usuario solo puede leer y escribir sus propios registros:
 
 ```sql
 -- Historial de sesiones entrenadas
@@ -172,9 +190,13 @@ sessions (
 workout_progress (
   user_id, session_key, completed_exercises (TEXT[])
 )
-```
 
-Cada usuario solo puede leer y escribir sus propios registros. Las políticas RLS se aplican a nivel de base de datos, no de aplicación.
+-- Seguimiento de cargas por ejercicio
+weight_logs (
+  id, user_id, exercise_key, date,
+  weight (NUMERIC), session_key, recorded_at
+)
+```
 
 ---
 
@@ -213,28 +235,27 @@ Periodización basada en NSCA — Essentials of Strength Training and Conditioni
 
 El build de producción genera un directorio `dist/` estático con Service Worker incluido.
 
-**Vercel:**
+**Vercel (recomendado):**
 ```bash
-npm run build
-# Sube dist/ o conecta el repositorio con Build Command: npm run build
+# Conectar el repositorio en vercel.com
+# Build Command: npm run build
+# Output Directory: dist
 ```
 
-**Netlify / Cloudflare Pages:**  
-Build Command: `npm run build` · Output Directory: `dist`
-
-Recuerda añadir las variables de entorno `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en la plataforma de deploy.
+Añadir las variables de entorno `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en el panel de Vercel.
 
 ---
 
 ## Roadmap
 
 - [ ] Mesociclos B3 y C3 (completar el plan de 12 semanas)
-- [ ] Biblioteca de ejercicios con filtros
+- [ ] Gráficas de evolución de carga por ejercicio (histórico completo)
+- [ ] Registro de medidas corporales (peso, cintura, cadera)
 - [ ] Planes por categoría: Open / Pro / Age Group
-- [ ] Gráficas de progresión de carga por ejercicio
 - [ ] Calculadoras de composición corporal (IMC, % grasa)
+- [ ] Foto de perfil (Supabase Storage)
 - [ ] Light mode toggle
-- [ ] Dashboard multi-atleta (coach view)
+- [ ] Términos de uso y Política de privacidad (pendiente revisión legal)
 
 ---
 
