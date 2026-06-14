@@ -44,6 +44,8 @@ export async function renderDashboard(): Promise<void> {
     </div>`;
   }).join('');
 
+  const prog = _computeProgress(history);
+
   el.innerHTML = `
     <div class="dash-greeting">
       <div>
@@ -74,6 +76,8 @@ export async function renderDashboard(): Promise<void> {
       </div>
     </div>
 
+    ${_quickActions()}
+
     <div class="weekly-chart" aria-label="Actividad semanal">
       <div class="weekly-chart-title">
         Esta semana — ${esc(String(activeDaysCount))} ${activeDaysCount === 1 ? 'sesión' : 'sesiones'}
@@ -82,6 +86,8 @@ export async function renderDashboard(): Promise<void> {
         ${weekBars}
       </div>
     </div>
+
+    ${_progressSection(prog)}
 
     ${history.length ? _lastSession(history[0]) : ''}
     ${history.length > 0 ? _recentFeed(history.slice(0, 5)) : _emptyCTA()}
@@ -201,4 +207,118 @@ function _motivationalMsg(weekSessions: number, streak: number): string {
   if (weekSessions >= 3) return `${weekSessions} sesiones completadas esta semana.`;
   if (weekSessions === 0) return 'Sin sesiones esta semana.';
   return `${weekSessions} sesión${weekSessions > 1 ? 'es' : ''} esta semana.`;
+}
+
+// ── Accesos Rápidos ───────────────────────────────────────────
+
+function _quickActions(): string {
+  return `
+    <div class="section-title-bar"><h3>Accesos rápidos</h3></div>
+    <div class="quick-actions">
+      <button class="quick-btn" id="qaGoTrain" aria-label="Ir a Entrena">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span>Entrena</span>
+      </button>
+      <button class="quick-btn" id="qaGoCompetition" aria-label="Ir a Competición">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+          <path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+          <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+        </svg>
+        <span>Competición</span>
+      </button>
+      <button class="quick-btn" id="qaGoNutrition" aria-label="Ir a Nutrición">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/>
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+        </svg>
+        <span>Nutrición</span>
+      </button>
+      <button class="quick-btn" id="qaGoHistory" aria-label="Ir a Historial">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>Historial</span>
+      </button>
+    </div>`;
+}
+
+// ── Progreso semanal / mensual / anual ────────────────────────
+
+interface _Progress {
+  thisWeek: number; lastWeek: number;
+  thisMonth: number; lastMonth: number;
+  thisYear: number; lastYear: number;
+}
+
+function _computeProgress(history: SessionEntry[]): _Progress {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const dow = (today.getDay() + 6) % 7; // lun=0
+  const thisWeekStart  = new Date(today); thisWeekStart.setDate(today.getDate() - dow);
+  const lastWeekStart  = new Date(thisWeekStart); lastWeekStart.setDate(thisWeekStart.getDate() - 7);
+  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const thisYearStart  = new Date(today.getFullYear(), 0, 1);
+  const lastYearStart  = new Date(today.getFullYear() - 1, 0, 1);
+
+  const p: _Progress = { thisWeek: 0, lastWeek: 0, thisMonth: 0, lastMonth: 0, thisYear: 0, lastYear: 0 };
+
+  history.forEach(s => {
+    const d = new Date(s.date + 'T12:00:00');
+    if (d >= thisWeekStart)                        p.thisWeek++;
+    else if (d >= lastWeekStart)                   p.lastWeek++;
+    if (d >= thisMonthStart)                       p.thisMonth++;
+    else if (d >= lastMonthStart && d < thisMonthStart) p.lastMonth++;
+    if (d >= thisYearStart)                        p.thisYear++;
+    else if (d >= lastYearStart && d < thisYearStart)   p.lastYear++;
+  });
+
+  return p;
+}
+
+function _delta(cur: number, prev: number): { text: string; cls: string } {
+  if (prev === 0 && cur === 0) return { text: '—', cls: 'delta-same' };
+  if (prev === 0)              return { text: 'Nuevo', cls: 'delta-up' };
+  const pct = Math.round(((cur - prev) / prev) * 100);
+  if (pct === 0) return { text: 'igual que antes', cls: 'delta-same' };
+  if (pct > 0)   return { text: `+${pct}% vs anterior`, cls: 'delta-up' };
+  return { text: `${pct}% vs anterior`, cls: 'delta-down' };
+}
+
+function _progressSection(p: _Progress): string {
+  const week  = _delta(p.thisWeek,  p.lastWeek);
+  const month = _delta(p.thisMonth, p.lastMonth);
+  const year  = _delta(p.thisYear,  p.lastYear);
+
+  return `
+    <div class="section-title-bar"><h3>Progreso</h3></div>
+    <div class="progress-section">
+      <div class="progress-card">
+        <div class="progress-label">Esta semana</div>
+        <div class="progress-val">${p.thisWeek}</div>
+        <div class="progress-sub">sesiones</div>
+        <div class="progress-delta ${esc(week.cls)}">${esc(week.text)}</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-label">Este mes</div>
+        <div class="progress-val">${p.thisMonth}</div>
+        <div class="progress-sub">sesiones</div>
+        <div class="progress-delta ${esc(month.cls)}">${esc(month.text)}</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-label">Este año</div>
+        <div class="progress-val">${p.thisYear}</div>
+        <div class="progress-sub">sesiones</div>
+        <div class="progress-delta ${esc(year.cls)}">${esc(year.text)}</div>
+      </div>
+    </div>`;
 }

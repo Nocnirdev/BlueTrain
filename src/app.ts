@@ -164,11 +164,15 @@ function _setupEventListeners(): void {
   // Avatar btn → profile (delegado en dashboard, también en header)
   document.getElementById('headerAvatarBtn')?.addEventListener('click', () => void showProfileModal());
 
-  // Dashboard delegated clicks
+  // Dashboard delegated clicks (history feed + quick actions)
   document.addEventListener('click', e => {
     const target = e.target as HTMLElement;
-    if (target.id === 'dashViewAll') { switchView('history'); return; }
-    if (target.id === 'dashGoTrain') { switchView('training'); return; }
+    if (target.id === 'dashViewAll')      { switchView('history');     return; }
+    if (target.id === 'dashGoTrain')      { switchView('training');    return; }
+    if (target.id === 'qaGoTrain')        { switchView('training');    return; }
+    if (target.id === 'qaGoCompetition')  { switchView('competition'); return; }
+    if (target.id === 'qaGoNutrition')    { switchView('nutrition');   return; }
+    if (target.id === 'qaGoHistory')      { switchView('history');     return; }
   });
 }
 

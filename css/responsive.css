@@ -3,6 +3,12 @@
    Mobile-first. Estas reglas amplían en pantallas mayores.
    ============================================================ */
 
+/* ── Móvil pequeño < 380px ──────────────────────────────── */
+@media (max-width: 380px) {
+  .quick-actions        { grid-template-columns: repeat(2, 1fr); }
+  .progress-section     { grid-template-columns: repeat(1, 1fr); }
+}
+
 /* ── Tablet ≥ 600px ─────────────────────────────────────── */
 @media (min-width: 600px) {
   .session-stats        { grid-template-columns: repeat(3, 1fr); }
@@ -14,7 +20,6 @@
   .timer-display        { font-size: 96px; }
   .modal-sheet          { border-radius: var(--radius-xl); margin: var(--space-5); max-height: 85vh; }
   .bt-modal             { align-items: center; }
-  .level-grid, .goal-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* ── Desktop ≥ 900px ────────────────────────────────────── */
