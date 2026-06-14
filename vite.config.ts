@@ -9,11 +9,11 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          supabase: ['@supabase/supabase-js'],
+        manualChunks(id: string) {
+          if (id.includes('@supabase/supabase-js')) return 'supabase';
         },
       },
     },
