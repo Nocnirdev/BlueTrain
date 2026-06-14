@@ -6,7 +6,6 @@
 export interface UserProfile {
   id: string;           // Supabase auth UID
   name: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
   goal: 'fat_loss' | 'hypertrophy' | 'performance';
   createdAt: string;
   updatedAt: string;

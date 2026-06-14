@@ -60,7 +60,7 @@ export const Auth = {
       email,
       password,
       options: {
-        data: { name, level: 'beginner', goal: 'performance' },
+        data: { name, goal: 'performance' },
         emailRedirectTo: window.location.origin,
       },
     });
@@ -94,7 +94,7 @@ export const Auth = {
 
   // ── Actualizar perfil ─────────────────────────────────────
 
-  async updateProfile(updates: Partial<Pick<UserProfile, 'name' | 'level' | 'goal'>>): Promise<{ error: string | null }> {
+  async updateProfile(updates: Partial<Pick<UserProfile, 'name'>>): Promise<{ error: string | null }> {
     const { error } = await supabase.auth.updateUser({ data: updates });
     if (error) return { error: _mapError(error.message) };
     if (_state.profile) {
@@ -118,7 +118,6 @@ async function _loadProfile(userId: string, email: string): Promise<void> {
     profile: {
       id: userId,
       name: (meta['name'] as string) || email.split('@')[0],
-      level: (meta['level'] as UserProfile['level']) || 'beginner',
       goal: (meta['goal'] as UserProfile['goal']) || 'performance',
       createdAt: user?.created_at ?? new Date().toISOString(),
       updatedAt: new Date().toISOString(),

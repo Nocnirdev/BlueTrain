@@ -1,4 +1,5 @@
 import { esc, $maybe } from '@/lib/html';
+import { Auth } from '@/services/auth';
 
 export function renderNutrition(): void {
   const el = document.getElementById('nutritionSection');
@@ -108,6 +109,12 @@ export function renderNutrition(): void {
       ])}
     </div>
     <div class="footer-info">NUTRICIÓN BASADA EN EVIDENCIA · ISSN · ACSM · WHO/OMS · NSCA</div>`;
+
+  // Pre-rellenar objetivo según el perfil del usuario
+  const profileGoal = Auth.getState().profile?.goal;
+  const goalMap: Record<string, string> = { fat_loss: 'loss', hypertrophy: 'gain', performance: 'maintain' };
+  const calcGoalEl = $maybe<HTMLSelectElement>('calcGoal');
+  if (calcGoalEl && profileGoal && goalMap[profileGoal]) calcGoalEl.value = goalMap[profileGoal]!;
 
   $maybe('calcBtn')?.addEventListener('click', _calcNutrition);
 }
