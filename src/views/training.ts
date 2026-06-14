@@ -85,8 +85,8 @@ export async function renderSession(key: string): Promise<void> {
     block.items.forEach((ex, eIdx) => {
       const exId = `${key}-${bIdx}-${eIdx}`;
       const baseQuery = ex.searchQuery ?? ex.name + ' tutorial';
-      const generalUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' 2024 2025')}&sp=EgIIBQ%3D%3D`;
-      const spanishUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' en español 2024 2025')}&hl=es&sp=EgIIBQ%3D%3D`;
+      const generalUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery)}`;
+      const spanishUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(baseQuery + ' en español')}&hl=es`;
       const weightKey  = getWeightKey(ex.name);
 
       html += `
