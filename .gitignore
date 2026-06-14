@@ -8,3 +8,4 @@ dist/
 # Claude Code / Playwright artifacts
 .playwright-mcp/
 *-check.png
+*.txt
