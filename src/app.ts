@@ -155,6 +155,20 @@ function _setupEventListeners(): void {
   document.getElementById('saveLogBtn')?.addEventListener('click', saveLoggedSession);
   document.getElementById('cancelLogBtn')?.addEventListener('click', closeLogModal);
 
+  // Profile modal — level/goal toggle buttons
+  document.querySelectorAll<HTMLElement>('.profile-level-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.profile-level-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  document.querySelectorAll<HTMLElement>('.profile-goal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.profile-goal-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
   // Profile modal buttons
   document.getElementById('profileSaveBtn')?.addEventListener('click', () => void saveProfileChanges());
   document.getElementById('profileCancelBtn')?.addEventListener('click', closeProfileModal);
