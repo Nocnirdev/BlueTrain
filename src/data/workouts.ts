@@ -375,4 +375,100 @@ export const WORKOUTS_DATA: WorkoutsData = {
       },
     ],
   },
+
+  B3: {
+    title: 'Peaking · Tren Superior + Pull',
+    subtitle: 'Mesociclo 3 · Pico de fuerza de tirón · Preparación específica',
+    week: 'Semanas 9–12', duration: '65 min', focus: 'Fuerza + Tracción bajo fatiga',
+    blocks: [
+      {
+        type: 'warmup', title: 'Activación de tracción', duration: '10 min',
+        items: [
+          { name: 'Ski Erg Z1 progresivo', prescription: '4 min', anim: 'ski-erg-warm', searchQuery: 'ski erg warm up technique', cues: ['Empieza a RPE 3 y llega a RPE 5 en el último minuto', 'Coordina brazos, tronco y cadera sin tirar solo con los hombros', 'Mantén el tronco estable: es activación, no una serie de trabajo', 'Termina con la sensación de estar preparado, no fatigado'] },
+          { name: 'Band pull-aparts', prescription: '2 × 15', anim: 'band-pull-apart', searchQuery: 'band pull apart technique', cues: ['Brazos a la altura del pecho y costillas controladas', 'Separa la banda hasta que las escápulas se junten sin elevar los hombros', 'Haz las repeticiones lentas para preparar la espalda alta', 'Reduce la tensión si no puedes mantener el cuello relajado'] },
+          { name: 'Scapular pull-ups', prescription: '2 × 8', anim: 'scap-pullup', searchQuery: 'scapular pull up technique', cues: ['Cuelga con los brazos rectos y baja los hombros sin doblar los codos', 'Piensa en alejar los hombros de las orejas', 'Controla la subida y la bajada: no balancees el cuerpo', 'Usa una banda si no puedes mantener la posición con calidad'] },
+          { name: 'Peso muerto rumano ligero', prescription: '2 × 6', anim: 'deadlift', searchQuery: 'romanian deadlift warm up technique', cues: ['Carga ligera, enfocada en el patrón de bisagra', 'Cadera atrás y barra o mancuernas cerca de las piernas', 'Mantén la espalda neutra y para antes de perder la posición', 'Añade series de aproximación antes del peso muerto de trabajo'] },
+        ],
+      },
+      {
+        type: 'strength', title: 'Bloque de pico de tirón', duration: '22 min',
+        note: '<strong>Peaking M3:</strong> semanas 9–11: sube de forma gradual si la técnica se mantiene; semana 12: baja a 3 × 3 al 75% y evita repeticiones forzadas.',
+        items: [
+          { name: 'A1 · Peso muerto convencional', prescription: '4 × 3', rpe: 'RPE 8–9', rest: '3 min', anim: 'deadlift', searchQuery: 'deadlift peaking 4x3 technique', cues: ['Cada repetición empieza desde una posición estable: barra cerca de las espinillas y abdomen firme', 'Empuja el suelo y deja que cadera y hombros suban a la vez', 'No conviertas las últimas series en repeticiones lentas o desordenadas', 'Si la barra se aleja del cuerpo, reduce la carga', 'En la semana 12 usa una carga cómoda y conserva velocidad'] },
+          { name: 'A2 · Dominadas lastradas o estrictas', prescription: '4 × 3–5', rpe: 'RPE 8', rest: '2 min', anim: 'pull-up', searchQuery: 'weighted pull up strict form', cues: ['Usa lastre solo si puedes completar repeticiones estrictas sin balanceo', 'Inicia el movimiento bajando las escápulas antes de tirar con los brazos', 'Lleva el pecho hacia la barra y controla por completo el descenso', 'Con banda, elige una asistencia que mantenga el mismo esfuerzo objetivo'] },
+          { name: 'B1 · Remo con mancuerna', prescription: '3 × 5/lado', rpe: 'RPE 8', rest: '90s', anim: 'db-row', searchQuery: 'dumbbell row heavy technique', cues: ['Apoya una mano y una rodilla para evitar que el tronco rote', 'Tira el codo hacia la cadera, no hacia el hombro', 'Pausa un instante arriba sin encoger el hombro', 'Baja con control y mantén el mismo peso en ambos lados'] },
+          { name: 'B2 · Hollow hold', prescription: '3 × 20–30s', rpe: 'RPE 7', rest: '60s', anim: 'hollow-hold', searchQuery: 'hollow hold technique', cues: ['La zona lumbar permanece en contacto con el suelo', 'Acerca brazos o piernas al cuerpo si la espalda se arquea', 'Respira corto y controlado sin perder tensión abdominal', 'Termina la serie antes de compensar con la zona lumbar'] },
+        ],
+      },
+      {
+        type: 'competition', title: 'Transiciones de tirón', duration: '18 min',
+        protocol: { name: '2 rondas · RPE 8', time: 'Descanso 3 min entre rondas', items: ['800 m carrera a ritmo objetivo', '500 m remo a ritmo objetivo', '25 m sled pull o 15 inverted rows', '50 m sandbag lunges a peso objetivo'] },
+        items: [
+          { name: 'Carrera 800 m a ritmo objetivo', prescription: '800 m · RPE 8', anim: 'running', searchQuery: 'functional race running transition pace', cues: ['Busca un ritmo sostenido que puedas repetir en la segunda ronda', 'Llega al remo con control respiratorio, sin esprintar el último tramo', 'Mantén pasos cortos y una postura alta al acercarte a la estación', 'La prioridad es practicar la transición, no ganar esta parte aislada'] },
+          { name: 'Remo a ritmo objetivo', prescription: '500 m', anim: 'row-machine', searchQuery: 'rowing race pace technique', cues: ['Empuja con las piernas antes de terminar el tirón con cadera y brazos', 'Recupera sin prisa: brazos, cadera y por último piernas', 'Mantén un ritmo que puedas sostener sin que la técnica se rompa', 'Anota el ritmo medio para compararlo en tus próximas simulaciones'] },
+          { name: 'Sled pull o inverted rows', prescription: '25 m o 15 reps', anim: 'sled-pull', searchQuery: 'sled pull technique functional race', cues: ['En el sled, alterna las manos y avanza sin dejar la cuerda floja', 'Con inverted rows, lleva el pecho hacia la barra manteniendo el cuerpo alineado', 'Evita tirar solo con los brazos: usa espalda y cadera de forma coordinada', 'Elige la alternativa que puedas ejecutar con técnica consistente'] },
+          { name: 'Sandbag lunges', prescription: '50 m · peso objetivo', anim: 'walking-lunges', searchQuery: 'sandbag walking lunge technique', cues: ['Mantén el saco estable y el tronco alto en cada paso', 'La rodilla trasera toca el suelo con control antes de avanzar', 'Da pasos largos y regulares para no acumular repeticiones innecesarias', 'Reduce carga o distancia si no puedes mantener una rodilla estable'] },
+        ],
+      },
+      {
+        type: 'finisher', title: 'Agarre y postura', duration: '5 min',
+        protocol: { name: 'EMOM · 5 min', time: 'Alterna cada minuto', items: ['Minutos impares: 40 m suitcase carry por lado', 'Minutos pares: 8 scapular pull-ups controladas'] },
+        items: [
+          { name: 'Suitcase carry', prescription: '40 m/lado', anim: 'suitcase-carry', searchQuery: 'suitcase carry anti lateral flexion', cues: ['Camina despacio con el peso a un solo lado', 'No te inclines hacia la carga: mantén hombros y pelvis nivelados', 'Aprieta el agarre sin encoger el hombro', 'Reduce el peso si pierdes la postura antes de completar la distancia'] },
+        ],
+      },
+      {
+        type: 'cooldown', title: 'Vuelta a la calma', duration: '5 min',
+        items: [
+          { name: 'Lat stretch en barra', prescription: '45s/lado', anim: 'lat-stretch', searchQuery: 'lat stretch bar cooldown', cues: ['Sujeta la barra y lleva la cadera atrás sin forzar el hombro', 'Respira lento y deja que el dorsal se alargue de forma gradual', 'Cambia de lado manteniendo la espalda neutra', 'La sensación debe ser de estiramiento, nunca dolor agudo'] },
+          { name: 'Twist espinal tumbado', prescription: '45s/lado', anim: 'supine-twist', searchQuery: 'supine spinal twist cooldown', cues: ['Mantén ambos hombros apoyados en el suelo', 'Lleva la rodilla al lado contrario sin obligar el rango', 'Respira despacio y relaja la zona lumbar', 'Cambia de lado con control'] },
+          { name: 'Respiración 4-7-8', prescription: '90s', anim: 'breathing', searchQuery: '4 7 8 breathing cooldown', cues: ['Inhala cuatro segundos, retén siete y exhala ocho', 'Reduce el ritmo si la retención resulta incómoda', 'Mantén una postura cómoda y hombros relajados', 'Termina cuando tu respiración haya vuelto a un ritmo tranquilo'] },
+        ],
+      },
+    ],
+  },
+
+  C3: {
+    title: 'Peaking · Ensayo de competición',
+    subtitle: 'Mesociclo 3 · Transiciones, ritmo y taper',
+    week: 'Semanas 9–12', duration: '60 min', focus: 'Race rehearsal + Taper',
+    blocks: [
+      {
+        type: 'warmup', title: 'Preparación específica', duration: '10 min',
+        items: [
+          { name: 'Remo Z1 progresivo', prescription: '4 min', anim: 'row-warmup', searchQuery: 'rowing progressive warm up', cues: ['Empieza muy suave y aumenta hasta un esfuerzo cómodo', 'Coordina piernas, cadera y brazos desde las primeras paladas', 'Busca calor corporal, no cansancio', 'Termina con respiración controlada antes de correr'] },
+          { name: "World's greatest stretch", prescription: '4/lado', anim: 'world-stretch', searchQuery: 'worlds greatest stretch race warm up', cues: ['Muévete despacio entre las posiciones para preparar cadera y columna', 'Mantén el pie delantero estable y el tronco largo', 'No fuerces la rotación: gana rango de forma progresiva', 'Cambia de lado con el mismo número de repeticiones'] },
+          { name: 'Carrera progresiva', prescription: '2 × 200 m', anim: 'running', searchQuery: 'progressive running warm up', cues: ['La primera repetición es cómoda; la segunda se acerca al ritmo objetivo', 'Practica una cadencia estable y una postura relajada', 'Descansa caminando hasta recuperar la respiración', 'Debes llegar fresco al bloque principal'] },
+        ],
+      },
+      {
+        type: 'strength', title: 'Técnica bajo control', duration: '10 min',
+        note: '<strong>Semana 12:</strong> usa solo una ronda de cada ejercicio y mantén RPE 6. La sesión conserva ritmo y técnica, no busca fatiga adicional.',
+        items: [
+          { name: 'Wall ball a peso objetivo', prescription: '3 × 12', rpe: 'RPE 7', rest: '60s', anim: 'wall-ball', searchQuery: 'wall ball technique target height', cues: ['Elige un peso que te permita mantener profundidad y una recepción estable', 'Usa piernas y cadera para lanzar; los brazos solo terminan el gesto', 'Respira de forma regular en lugar de aguantar el aire', 'Corta la serie si pierdes profundidad o precisión en la diana'] },
+          { name: 'Farmer carry a peso objetivo', prescription: '2 × 50 m', rpe: 'RPE 7', rest: '60s', anim: 'farmer-carry', searchQuery: 'farmer carry race technique', cues: ['Hombros atrás y abajo, con el tronco alto', 'Da pasos cortos y continuos sin mirar al suelo', 'Apoya las cargas con control si el agarre falla', 'Busca una postura que puedas repetir tras correr'] },
+          { name: 'Burpee broad jump técnico', prescription: '2 × 8', rpe: 'RPE 7', rest: '60s', anim: 'burpee-broad', searchQuery: 'burpee broad jump technique', cues: ['Pecho y cadera llegan al suelo si ese es el estándar de tu prueba', 'Aterriza suave y usa el impulso para iniciar la siguiente repetición', 'Prioriza una distancia de salto que puedas repetir', 'No conviertas este bloque técnico en un esprint'] },
+        ],
+      },
+      {
+        type: 'competition', title: 'Ensayo de cuatro estaciones', duration: '30 min',
+        protocol: { name: '2 rondas · Race rehearsal', time: 'Semana 12: 1 ronda a RPE 6', items: ['800 m carrera a ritmo objetivo', '500 m ski erg', '25 m sled push o 20 squat jumps', '25 m sled pull o 15 inverted rows', '25 wall balls a peso objetivo'] },
+        items: [
+          { name: 'Carrera 800 m a ritmo objetivo', prescription: '800 m · RPE 7–8', anim: 'running', searchQuery: 'functional race 800m running pace', cues: ['Mantén un ritmo que permita trabajar bien al llegar a la siguiente estación', 'Evita esprintar los primeros metros: la segunda ronda debe salir igual de ordenada', 'Relaja hombros y manos mientras corres', 'Controla el ritmo con una referencia que puedas repetir'] },
+          { name: 'Ski Erg', prescription: '500 m · ritmo objetivo', anim: 'ski-erg', searchQuery: 'ski erg race pace technique', cues: ['Inicia con un ritmo sostenible, no con los tirones más fuertes', 'Termina cada tirón cerca de los muslos y vuelve con control', 'Usa una ligera bisagra de cadera sin redondear la espalda', 'Anota el ritmo medio si quieres compararlo en futuras sesiones'] },
+          { name: 'Sled push o squat jumps', prescription: '25 m o 20 reps', anim: 'sled-push', searchQuery: 'sled push technique squat jump alternative', cues: ['Con sled, inclina el cuerpo y mantén los brazos firmes sobre las asas', 'Da pasos cortos sin parar el trineo entre ellos', 'Sin sled, usa saltos controlados y aterriza con rodillas alineadas', 'Escoge una carga o alternativa que permita completar las dos rondas con calidad'] },
+          { name: 'Sled pull o inverted rows', prescription: '25 m o 15 reps', anim: 'sled-pull', searchQuery: 'sled pull functional race technique', cues: ['Alterna manos sin perder tensión en la cuerda', 'Coordina pasos atrás y tirón para no cargar solo los brazos', 'Con inverted rows, mantén el cuerpo recto y acerca el pecho a la barra', 'No sacrifiques la posición lumbar por avanzar más rápido'] },
+          { name: 'Wall balls a peso objetivo', prescription: '25 reps', anim: 'wall-ball', searchQuery: 'wall ball competition practice', cues: ['Divide las repeticiones en series breves solo si el ritmo se deteriora', 'Mantén la sentadilla a la profundidad que exige tu prueba', 'Recibe el balón amortiguando con piernas y cadera', 'Haz pausas cortas, con respiración controlada'] },
+        ],
+      },
+      {
+        type: 'finisher', title: 'Soltar y recuperar', duration: '10 min',
+        items: [
+          { name: 'Caminata de descarga', prescription: '3 min', anim: 'running', searchQuery: 'active recovery walk cooldown', cues: ['Camina hasta que puedas hablar con normalidad', 'Mueve suavemente los brazos y mantén una respiración amplia', 'No te pares de golpe tras el último bloque', 'Aprovecha para anotar ritmo y sensaciones antes de olvidarlas'] },
+          { name: 'Pigeon stretch bilateral', prescription: '60s/lado', anim: 'pigeon-pose', searchQuery: 'pigeon pose hip cooldown', cues: ['Busca una posición cómoda de cadera sin forzar la rodilla', 'Apoya un cojín bajo el glúteo si lo necesitas', 'Respira lento y cambia de lado con control', 'Mantén el estiramiento suave tras el trabajo de carrera'] },
+          { name: 'Respiración diafragmática', prescription: '2 min', anim: 'breathing', searchQuery: 'diaphragmatic breathing post workout', cues: ['Inhala por la nariz expandiendo el abdomen', 'Exhala más lento de lo que inhalas', 'Mantén hombros y mandíbula relajados', 'Termina la sesión cuando la respiración esté estable'] },
+        ],
+      },
+    ],
+  },
 };

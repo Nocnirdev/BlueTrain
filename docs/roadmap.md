@@ -18,7 +18,7 @@
 
 ## Contenido y entrenamiento
 
-- [ ] Completar las sesiones B3 y C3 del tercer mesociclo.
+- [x] Completadas las sesiones B3 y C3 del tercer mesociclo, con progresión y taper de la semana 12.
 - [ ] Biblioteca de ejercicios con filtros.
 - [ ] Planes por división: Open, Pro y Age Group.
 - [ ] Calculadoras de composición corporal.

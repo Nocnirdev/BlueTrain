@@ -167,7 +167,7 @@ Periodización basada en NSCA — Essentials of Strength Training and Conditioni
 
 ## Roadmap
 
-- [ ] Mesociclos B3 y C3 (completar el plan de 12 semanas)
+- [x] Mesociclos B3 y C3 (plan de 12 semanas completo)
 - [ ] Gráficas de evolución de carga por ejercicio (histórico completo)
 - [ ] Registro de medidas corporales (peso, cintura, cadera)
 - [ ] Planes por categoría: Open / Pro / Age Group
