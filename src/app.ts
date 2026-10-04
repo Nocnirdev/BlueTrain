@@ -7,6 +7,7 @@ import { renderCompetition } from '@/views/competition';
 import { renderNutrition } from '@/views/nutrition';
 import { renderHistory } from '@/views/history';
 import { renderAuthView } from '@/views/auth';
+import { closeMeasurementsModal, saveMeasurements } from '@/views/measurements';
 import {
   showProfileModal,
   closeProfileModal,
@@ -127,6 +128,9 @@ export async function init(): Promise<void> {
     if (_currentView === 'dashboard') void renderDashboard();
     if (_currentView === 'history') void renderHistory();
   });
+  document.addEventListener('bt:measurementsSaved', () => {
+    if (_currentView === 'dashboard') void renderDashboard();
+  });
   document.addEventListener('bt:viewAll', () => switchView('history'));
   document.addEventListener('bt:goTrain', () => switchView('training'));
   document.addEventListener('bt:syncQueueChanged', updateSyncStatus);
@@ -157,6 +161,7 @@ function _setupEventListeners(): void {
     closeTimer();
     closeLogModal();
     closeProfileModal();
+    closeMeasurementsModal();
     document.getElementById('onboardingModal')?.classList.remove('open');
     document.getElementById('confirmModal')?.classList.remove('open');
   });
@@ -169,6 +174,10 @@ function _setupEventListeners(): void {
   // Log modal buttons
   document.getElementById('saveLogBtn')?.addEventListener('click', saveLoggedSession);
   document.getElementById('cancelLogBtn')?.addEventListener('click', closeLogModal);
+
+  // Registro de medidas corporales
+  document.getElementById('saveMeasurementBtn')?.addEventListener('click', () => void saveMeasurements());
+  document.getElementById('cancelMeasurementBtn')?.addEventListener('click', closeMeasurementsModal);
 
   // Profile modal buttons
   document.getElementById('profileSaveBtn')?.addEventListener('click', () => void saveProfileChanges());

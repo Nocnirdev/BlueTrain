@@ -19,6 +19,8 @@
   .calc-grid            { grid-template-columns: repeat(4, 1fr); }
   .calc-results         { grid-template-columns: repeat(3, 1fr); }
   .stats-grid           { grid-template-columns: repeat(4, 1fr); }
+  .body-chart-grid      { grid-template-columns: repeat(2, 1fr); }
+  .measurement-fields   { grid-template-columns: repeat(3, 1fr); }
   .timer-display        { font-size: 96px; }
   .modal-sheet          { border-radius: var(--radius-xl); margin: var(--space-5); max-height: 85vh; }
   .bt-modal             { align-items: center; }

@@ -50,6 +50,7 @@ export interface LocalDataSummary {
   sessions: number;
   completedExercises: number;
   weightEntries: number;
+  measurementEntries: number;
   performanceEntries: number;
   hasUser: boolean;
   hasActiveTimer: boolean;
@@ -59,6 +60,7 @@ export interface LocalDataImportResult extends LocalDataSummary {
   importedSessions: number;
   importedCompletedExercises: number;
   importedWeightEntries: number;
+  importedMeasurementEntries: number;
   importedPerformanceEntries: number;
   restoredTimer: boolean;
 }
@@ -135,6 +137,13 @@ export interface WeightEntry {
   weight: number;        // kg
   sessionKey?: string;   // e.g. 'A1'
   recordedAt: string;    // ISO datetime
+}
+
+export interface BodyMeasurement {
+  date: string;
+  weight?: number;
+  waist?: number;
+  hip?: number;
 }
 
 export type SyncQueueOperation =

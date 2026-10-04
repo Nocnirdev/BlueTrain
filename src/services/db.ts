@@ -163,7 +163,7 @@ export const DB = {
     return (data ?? []).reduce((sum, r) => sum + ((r.duration as number) || 0), 0);
   },
 
-  // ── Seguimiento de pesos ─────────────────────────────────
+  // ── Seguimiento de cargas y medidas corporales ───────────
 
   async getAllWeightHistory(): Promise<Record<string, WeightEntry[]>> {
     const { userId } = Auth.getState();
@@ -279,7 +279,7 @@ export const DB = {
       const { error } = await supabase
         .from('weight_logs')
         .upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
-      if (error) result.errors.push('No se pudieron sincronizar los pesos registrados.');
+      if (error) result.errors.push('No se pudieron sincronizar los registros de carga y medidas corporales.');
       else {
         result.weights = rows.length;
         LocalStorage.clearSyncQueueKinds(userId, ['weight_upsert']);

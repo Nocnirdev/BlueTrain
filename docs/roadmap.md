@@ -6,8 +6,8 @@
 - [x] Autenticación, base de datos y PWA operativas.
 - [x] Panel, entrenamiento, competición, nutrición, historial y perfil.
 - [x] Compilación compatible con Vite 8 y PWA.
-- [x] Copia JSON local de sesiones, progreso, pesos, rendimiento, perfil y temporizador.
-- [x] Sincronización voluntaria de sesiones, progreso y pesos al entrar.
+- [x] Copia JSON local de sesiones, progreso, pesos, medidas corporales, rendimiento, perfil y temporizador.
+- [x] Sincronización voluntaria de sesiones, progreso, pesos y medidas corporales al entrar.
 
 ## Próxima prioridad — Protección de datos
 
@@ -25,8 +25,8 @@
 
 ## Seguimiento y experiencia
 
+- [x] Registro de medidas corporales (peso, cintura y cadera) con gráficas de evolución en el dashboard.
 - [ ] Gráficas de evolución de carga con histórico completo.
-- [ ] Registro de medidas corporales.
 - [ ] Modo claro.
 - [ ] Términos de uso y política de privacidad revisados.
 

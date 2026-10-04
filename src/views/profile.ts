@@ -12,6 +12,7 @@ export function exportLocalBackup(): void {
   const parts: string[] = [];
   if (summary.sessions) parts.push(`${summary.sessions} sesiones`);
   if (summary.weightEntries) parts.push(`${summary.weightEntries} pesos`);
+  if (summary.measurementEntries) parts.push(`${summary.measurementEntries} mediciones corporales`);
   if (summary.completedExercises) parts.push(`${summary.completedExercises} ejercicios marcados`);
   showToast(parts.length ? `Copia descargada: ${parts.join(', ')}.` : 'Copia local descargada.', 'success');
 }
@@ -45,6 +46,7 @@ export async function importLocalBackup(file: File): Promise<void> {
     const restored: string[] = [];
     if (result.importedSessions) restored.push(`${result.importedSessions} sesiones`);
     if (result.importedWeightEntries) restored.push(`${result.importedWeightEntries} pesos`);
+    if (result.importedMeasurementEntries) restored.push(`${result.importedMeasurementEntries} mediciones corporales`);
     if (result.importedCompletedExercises) restored.push(`${result.importedCompletedExercises} ejercicios`);
     if (result.importedPerformanceEntries) restored.push(`${result.importedPerformanceEntries} borradores`);
     if (result.restoredTimer) restored.push('temporizador');
@@ -57,7 +59,7 @@ export async function importLocalBackup(file: File): Promise<void> {
   updateSyncStatus();
   if (!Auth.getState().userId) return;
   const syncNow = await showConfirm(
-    'La copia ya está protegida en este navegador. ¿Quieres sincronizar ahora sus sesiones, progreso y pesos con tu cuenta?',
+    'La copia ya está protegida en este navegador. ¿Quieres sincronizar ahora sus sesiones, progreso, pesos y medidas corporales con tu cuenta?',
     'Sincronizar ahora'
   );
   if (syncNow) await _syncLocalData();
@@ -65,7 +67,7 @@ export async function importLocalBackup(file: File): Promise<void> {
 
 export async function syncLocalData(): Promise<void> {
   const confirmed = await showConfirm(
-    'Se sincronizarán las sesiones, el progreso y los pesos guardados en este navegador. La copia local se conservará.',
+    'Se sincronizarán las sesiones, el progreso, los pesos y las medidas corporales guardadas en este navegador. La copia local se conservará.',
     'Sincronizar ahora'
   );
   if (confirmed) await _syncLocalData();
@@ -148,7 +150,7 @@ export async function saveProfileChanges(): Promise<void> {
 
 export async function confirmClearTrainingData(): Promise<void> {
   const confirmed = await showConfirm(
-    'Se borrarán sesiones, pesos, progreso, borradores y temporizador de este navegador y de tu cuenta. Esta acción no se puede deshacer.',
+    'Se borrarán sesiones, pesos, medidas corporales, progreso, borradores y temporizador de este navegador y de tu cuenta. Esta acción no se puede deshacer.',
     'Borrar datos'
   );
   if (!confirmed) return;
@@ -175,7 +177,7 @@ async function _syncLocalData(): Promise<void> {
   const parts: string[] = [];
   if (migration.sessions) parts.push(`${migration.sessions} sesiones`);
   if (migration.progress) parts.push(`${migration.progress} progresos`);
-  if (migration.weights) parts.push(`${migration.weights} pesos`);
+  if (migration.weights) parts.push(`${migration.weights} registros de carga y medidas`);
   if (pending.synced) parts.push(`${pending.synced} cambios pendientes`);
 
   updateSyncStatus();
@@ -192,6 +194,7 @@ function _summaryText(summary: ReturnType<typeof LocalStorage.getBackupPreview>)
   const parts: string[] = [];
   if (summary.sessions) parts.push(`${summary.sessions} sesiones`);
   if (summary.weightEntries) parts.push(`${summary.weightEntries} pesos`);
+  if (summary.measurementEntries) parts.push(`${summary.measurementEntries} mediciones corporales`);
   if (summary.completedExercises) parts.push(`${summary.completedExercises} ejercicios`);
   if (summary.performanceEntries) parts.push(`${summary.performanceEntries} borradores`);
   if (summary.hasActiveTimer) parts.push('un temporizador');

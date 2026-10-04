@@ -161,6 +161,38 @@
       </div>
     </div>
 
+    <!-- MODAL: MEDIDAS CORPORALES -->
+    <div class="bt-modal" id="measurementModal"
+         role="dialog" aria-modal="true" aria-labelledby="measurementModalTitle">
+      <div class="modal-sheet">
+        <div class="modal-handle" aria-hidden="true"></div>
+        <div class="modal-title" id="measurementModalTitle">Registrar medidas</div>
+        <p class="modal-subtitle">Registra solo lo que quieras seguir. Se guardará en este dispositivo y en tu cuenta cuando haya conexión.</p>
+        <div class="log-field">
+          <label class="log-label" for="measurementDate">Fecha</label>
+          <input class="log-input" id="measurementDate" type="date" required>
+        </div>
+        <div class="measurement-fields">
+          <div class="log-field">
+            <label class="log-label" for="measurementWeight">Peso corporal · kg</label>
+            <input class="log-input" id="measurementWeight" type="number" min="20" max="400" step="0.1" inputmode="decimal" placeholder="Ej. 72,5">
+          </div>
+          <div class="log-field">
+            <label class="log-label" for="measurementWaist">Cintura · cm</label>
+            <input class="log-input" id="measurementWaist" type="number" min="30" max="250" step="0.1" inputmode="decimal" placeholder="Ej. 82">
+          </div>
+          <div class="log-field">
+            <label class="log-label" for="measurementHip">Cadera · cm</label>
+            <input class="log-input" id="measurementHip" type="number" min="30" max="250" step="0.1" inputmode="decimal" placeholder="Ej. 98">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-save" id="saveMeasurementBtn" type="button">Guardar medidas</button>
+          <button class="btn-cancel" id="cancelMeasurementBtn" type="button">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- MODAL: PERFIL -->
     <div class="bt-modal" id="profileModal"
          role="dialog" aria-modal="true" aria-label="Perfil de usuario">
@@ -208,7 +240,7 @@
         </div>
         <div class="danger-zone">
           <button class="btn-danger" id="clearTrainingDataBtn">
-            Borrar datos de entrenamiento
+            Borrar datos de entrenamiento y medidas
           </button>
           <button class="btn-danger" id="signOutBtn" style="margin-top:8px;">
             Cerrar sesión

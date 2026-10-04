@@ -2,6 +2,8 @@ import { DB } from '@/services/db';
 import { Auth } from '@/services/auth';
 import { esc, formatDate, formatDateLong, $maybe } from '@/lib/html';
 import type { SessionEntry } from '@/types';
+import { getBodyMeasurements } from '@/data/body-measurements';
+import { renderBodyTracking, openMeasurementsModal } from './measurements';
 
 export async function renderDashboard(): Promise<void> {
   const el = document.getElementById('dashboardSection');
@@ -9,12 +11,13 @@ export async function renderDashboard(): Promise<void> {
 
   el.innerHTML = _skeleton();
 
-  const [history, totalSessions, weekSessions, streak, totalMins] = await Promise.all([
+  const [history, totalSessions, weekSessions, streak, totalMins, weightHistory] = await Promise.all([
     DB.getHistory(),
     DB.getTotalSessions(),
     DB.getWeeklySessions(),
     DB.getStreak(),
     DB.getTotalMinutes(),
+    DB.getAllWeightHistory(),
   ]);
 
   const { profile } = Auth.getState();
@@ -78,6 +81,8 @@ export async function renderDashboard(): Promise<void> {
 
     ${_quickActions()}
 
+    ${renderBodyTracking(getBodyMeasurements(weightHistory))}
+
     <div class="weekly-chart" aria-label="Actividad semanal">
       <div class="weekly-chart-title">
         Esta semana — ${esc(String(activeDaysCount))} ${activeDaysCount === 1 ? 'sesión' : 'sesiones'}
@@ -97,6 +102,7 @@ export async function renderDashboard(): Promise<void> {
   $maybe('avatarBtn')?.addEventListener('click', () => {
     document.dispatchEvent(new CustomEvent('bt:showProfile'));
   });
+  $maybe('openMeasurementsBtn')?.addEventListener('click', openMeasurementsModal);
 }
 
 function _skeleton(): string {

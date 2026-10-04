@@ -9,6 +9,7 @@ import type {
   WeightEntry,
   WorkoutProgress,
 } from '@/types';
+import { countBodyMeasurementDates, isBodyMeasurementKey } from '@/data/body-measurements';
 
 // Capa de persistencia local (localStorage).
 // Usada como caché offline y para usuarios no autenticados.
@@ -271,12 +272,14 @@ function getSummary(): LocalDataSummary {
   const history = LocalStorage.getHistory();
   const progress = LocalStorage.getWorkoutProgress();
   const weights = LocalStorage.getAllWeightLog();
+  const allWeightEntries = Object.values(weights).flat();
   const performance = getAllPerformanceInputs();
 
   return {
     sessions: history.length,
     completedExercises: Object.values(progress).reduce((total, ids) => total + ids.length, 0),
-    weightEntries: Object.values(weights).reduce((total, entries) => total + entries.length, 0),
+    weightEntries: allWeightEntries.filter(entry => !isBodyMeasurementKey(entry.exerciseKey)).length,
+    measurementEntries: countBodyMeasurementDates(allWeightEntries),
     performanceEntries: Object.keys(performance).length,
     hasUser: LocalStorage.getUser() !== null,
     hasActiveTimer: LocalStorage.getSessionTimer() !== null,
@@ -285,11 +288,12 @@ function getSummary(): LocalDataSummary {
 
 function getBackupSummary(backup: LocalDataBackup): LocalDataSummary {
   const completedExercises = Object.values(backup.progress).reduce((total, ids) => total + ids.length, 0);
-  const weightEntries = Object.values(backup.weights).reduce((total, entries) => total + entries.length, 0);
+  const allWeightEntries = Object.values(backup.weights).flat();
   return {
     sessions: backup.history.length,
     completedExercises,
-    weightEntries,
+    weightEntries: allWeightEntries.filter(entry => !isBodyMeasurementKey(entry.exerciseKey)).length,
+    measurementEntries: countBodyMeasurementDates(allWeightEntries),
     performanceEntries: Object.keys(backup.performance).length,
     hasUser: backup.user !== null,
     hasActiveTimer: backup.sessionTimer !== null,
@@ -455,6 +459,7 @@ export const LocalStorage = {
     return summary.sessions > 0
       || summary.completedExercises > 0
       || summary.weightEntries > 0
+      || summary.measurementEntries > 0
       || summary.performanceEntries > 0
       || summary.hasUser
       || summary.hasActiveTimer;
@@ -515,11 +520,13 @@ export const LocalStorage = {
     const currentWeights = this.getAllWeightLog();
     const mergedWeights: Record<string, WeightEntry[]> = { ...currentWeights };
     let importedWeightEntries = 0;
+    let importedMeasurementEntries = 0;
     for (const [exerciseKey, incoming] of Object.entries(backup.weights)) {
       const current = currentWeights[exerciseKey] ?? [];
       const existing = new Set(current.map(entry => entry.id));
       const additions = incoming.filter(entry => !existing.has(entry.id));
-      importedWeightEntries += additions.length;
+      importedWeightEntries += additions.filter(entry => !isBodyMeasurementKey(entry.exerciseKey)).length;
+      importedMeasurementEntries += countBodyMeasurementDates(additions);
       mergedWeights[exerciseKey] = [...additions, ...current]
         .sort((a, b) => b.recordedAt.localeCompare(a.recordedAt))
         .slice(0, 200);
@@ -542,6 +549,7 @@ export const LocalStorage = {
       importedSessions: importedSessions.length,
       importedCompletedExercises,
       importedWeightEntries,
+      importedMeasurementEntries,
       importedPerformanceEntries,
       restoredTimer,
     };

@@ -1,6 +1,6 @@
 # BlueTrain
 
-**Aplicación web de entrenamiento funcional.** Plan de 3 mesociclos progresivos, tracking de rendimiento por usuario, seguimiento de cargas por ejercicio, nutrición basada en evidencia científica y simulación de carrera por estaciones.
+**Aplicación web de entrenamiento funcional.** Plan de 3 mesociclos progresivos, tracking de rendimiento por usuario, seguimiento de cargas y medidas corporales, nutrición basada en evidencia científica y simulación de carrera por estaciones.
 
 > Proyecto personal educativo y de formación, sin ánimo de lucro.
 
@@ -31,12 +31,13 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 - **Accesos rápidos:** navegación directa a Entrena, Competición, Nutrición e Historial
 - **Progreso comparativo:** sesiones de esta semana vs semana anterior, este mes vs mes anterior, este año vs año anterior (con % de variación)
 - Gráfico de actividad semanal (L–D)
+- Registro de peso, cintura y cadera con gráficas de evolución
 - Último entrenamiento y feed de actividad reciente
 
 ### Entrenamiento
-- **7 sesiones** organizadas en 3 mesociclos (Base · Intensificación · Peaking)
+- **9 sesiones** organizadas en 3 mesociclos (Base · Intensificación · Peaking)
 - Periodización científica basada en NSCA: progresión de %1RM por semana
-- **134 ejercicios** con 4–6 puntos clave técnicos detallados en español por ejercicio
+- **164 ejercicios** con 4–6 puntos clave técnicos detallados en español por ejercicio
 - Temporizador de descanso con audio (Web Audio API) y vibración
 - Bloque de competición en cada sesión con protocolo AMRAP / For Time / EMOM
 - Checkboxes de progreso por ejercicio sincronizados con Supabase
@@ -49,6 +50,11 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 - Historial por ejercicio: mini gráfico SVG de evolución + tabla de las últimas 15 entradas
 - Almacenamiento en Supabase (`weight_logs`) con fallback a localStorage offline
 - 18 ejercicios con clave estable para trazabilidad histórica
+
+### Medidas corporales
+- Registro opcional de peso, cintura y cadera por fecha
+- Resumen de las últimas medidas y gráficas de evolución en el dashboard
+- Se guarda con el mismo sistema de copia local, sincronización y privacidad por cuenta
 
 ### Competición
 - Guía completa de las 8 estaciones de carrera funcional por estaciones
@@ -69,7 +75,7 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 - Perfil de usuario con nombre y objetivo de entrenamiento
 - Estadísticas del perfil: sesiones, racha y tiempo total
 - Copia descargable de los datos locales desde el acceso y el perfil
-- Sincronización voluntaria de sesiones, progreso y pesos al entrar
+- Sincronización voluntaria de sesiones, progreso, pesos y medidas corporales al entrar
 - Cada usuario solo accede a sus propios datos (RLS en PostgreSQL)
 
 ---
@@ -89,7 +95,8 @@ BlueTrain/
 │   │   ├── db.ts               # DB service (Supabase con fallback localStorage)
 │   │   └── storage.ts          # Capa localStorage (caché offline)
 │   ├── data/
-│   │   ├── workouts.ts         # 7 sesiones, 3 mesociclos, 134 ejercicios (tipado)
+│   │   ├── workouts.ts         # 9 sesiones, 3 mesociclos, 164 ejercicios (tipado)
+│   │   ├── body-measurements.ts # Claves y agrupación de medidas corporales
 │   │   ├── weight-keys.ts      # Mapa de nombres → claves estables para tracker de peso
 │   │   └── stations.ts         # 8 estaciones de carrera funcional
 │   ├── components/
@@ -98,6 +105,7 @@ BlueTrain/
 │   ├── views/
 │   │   ├── auth.ts             # Login / signup / forgot password
 │   │   ├── dashboard.ts        # Dashboard: stats, accesos rápidos, progreso, actividad
+│   │   ├── measurements.ts     # Registro y gráficas de medidas corporales
 │   │   ├── training.ts         # Sesiones + log modal + tracker de pesos por ejercicio
 │   │   ├── competition.ts      # Guía de estaciones
 │   │   ├── nutrition.ts        # Nutrición + calculadora Mifflin-St Jeor
@@ -168,8 +176,8 @@ Periodización basada en NSCA — Essentials of Strength Training and Conditioni
 ## Roadmap
 
 - [x] Mesociclos B3 y C3 (plan de 12 semanas completo)
+- [x] Registro de medidas corporales (peso, cintura y cadera) y gráficas de evolución
 - [ ] Gráficas de evolución de carga por ejercicio (histórico completo)
-- [ ] Registro de medidas corporales (peso, cintura, cadera)
 - [ ] Planes por categoría: Open / Pro / Age Group
 - [ ] Calculadoras de composición corporal (IMC, % grasa)
 - [ ] Foto de perfil (Supabase Storage)

@@ -204,14 +204,15 @@ async function _handleForgot(): Promise<void> {
 
 async function _offerMigration(): Promise<void> {
   const summary = LocalStorage.getSummary();
-  if (!summary.sessions && !summary.completedExercises && !summary.weightEntries) return;
+  if (!summary.sessions && !summary.completedExercises && !summary.weightEntries && !summary.measurementEntries) return;
 
   const localParts: string[] = [];
   if (summary.sessions) localParts.push(`${summary.sessions} sesiones`);
   if (summary.weightEntries) localParts.push(`${summary.weightEntries} pesos`);
+  if (summary.measurementEntries) localParts.push(`${summary.measurementEntries} mediciones corporales`);
   if (summary.completedExercises) localParts.push(`${summary.completedExercises} ejercicios marcados`);
   const confirmed = await showConfirm(
-    `Hemos encontrado ${localParts.join(', ')} en este navegador. Antes de sincronizar, descarga una copia de seguridad. ¿Quieres sincronizar ahora las sesiones, el progreso y los pesos?`,
+    `Hemos encontrado ${localParts.join(', ')} en este navegador. Antes de sincronizar, descarga una copia de seguridad. ¿Quieres sincronizar ahora las sesiones, el progreso, los pesos y las medidas corporales?`,
     'Sincronizar ahora'
   );
   if (!confirmed) {
@@ -223,7 +224,7 @@ async function _offerMigration(): Promise<void> {
   const migratedParts: string[] = [];
   if (migrated.sessions) migratedParts.push(`${migrated.sessions} sesiones`);
   if (migrated.progress) migratedParts.push(`${migrated.progress} progresos`);
-  if (migrated.weights) migratedParts.push(`${migrated.weights} pesos`);
+  if (migrated.weights) migratedParts.push(`${migrated.weights} registros de carga y medidas`);
   if (migratedParts.length) {
     showToast(`Datos locales revisados y sincronizados: ${migratedParts.join(', ')}.`, 'info');
   }
@@ -234,6 +235,7 @@ function _backupMessage(summary: ReturnType<typeof LocalStorage.getSummary>): st
   const parts: string[] = [];
   if (summary.sessions) parts.push(`${summary.sessions} sesiones`);
   if (summary.weightEntries) parts.push(`${summary.weightEntries} pesos`);
+  if (summary.measurementEntries) parts.push(`${summary.measurementEntries} mediciones corporales`);
   if (summary.completedExercises) parts.push(`${summary.completedExercises} ejercicios marcados`);
   return parts.length ? `Copia descargada: ${parts.join(', ')}.` : 'Copia local descargada.';
 }
