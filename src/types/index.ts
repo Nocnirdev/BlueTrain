@@ -35,6 +35,33 @@ export interface SessionTimer {
   startedAt: number;  // Date.now()
 }
 
+export interface LocalDataBackup {
+  version: 1;
+  exportedAt: string;
+  user: UserProfile | null;
+  history: SessionEntry[];
+  progress: WorkoutProgress;
+  weights: Record<string, WeightEntry[]>;
+  performance: Record<string, string>;
+  sessionTimer: SessionTimer | null;
+}
+
+export interface LocalDataSummary {
+  sessions: number;
+  completedExercises: number;
+  weightEntries: number;
+  performanceEntries: number;
+  hasUser: boolean;
+  hasActiveTimer: boolean;
+}
+
+export interface LocalMigrationResult {
+  sessions: number;
+  progress: number;
+  weights: number;
+  errors: string[];
+}
+
 export type ViewName = 'dashboard' | 'training' | 'competition' | 'nutrition' | 'history';
 
 // ── Workout data types ──────────────────────────────────────

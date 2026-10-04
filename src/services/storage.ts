@@ -1,4 +1,12 @@
-import type { UserProfile, SessionEntry, WorkoutProgress, SessionTimer, WeightEntry } from '@/types';
+import type {
+  LocalDataBackup,
+  LocalDataSummary,
+  SessionEntry,
+  SessionTimer,
+  UserProfile,
+  WeightEntry,
+  WorkoutProgress,
+} from '@/types';
 
 // Capa de persistencia local (localStorage).
 // Usada como caché offline y para usuarios no autenticados.
@@ -11,6 +19,7 @@ const KEYS = {
   SESSION_START:    'bt_session_start',
   PERF_PREFIX:      'bt_perf_',
   WEIGHT_LOG:       'bt_weights',
+  LEGACY_PROGRESS:  'bluetrain_progress',
 } as const;
 
 function get<T>(key: string): T | null {
@@ -25,6 +34,46 @@ function set(key: string, value: unknown): boolean {
 
 function remove(key: string): void {
   try { localStorage.removeItem(key); } catch { /* ignore */ }
+}
+
+function getAllPerformanceInputs(): Record<string, string> {
+  const inputs: Record<string, string> = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key?.startsWith(KEYS.PERF_PREFIX)) continue;
+      const value = get<string>(key);
+      if (value !== null) inputs[key.slice(KEYS.PERF_PREFIX.length)] = value;
+    }
+  } catch { /* ignore */ }
+  return inputs;
+}
+
+function mergeProgress(...sources: WorkoutProgress[]): WorkoutProgress {
+  const merged: WorkoutProgress = {};
+  for (const source of sources) {
+    for (const [sessionKey, completedIds] of Object.entries(source)) {
+      if (!Array.isArray(completedIds)) continue;
+      merged[sessionKey] = [...new Set([...(merged[sessionKey] ?? []), ...completedIds])];
+    }
+  }
+  return merged;
+}
+
+function getSummary(): LocalDataSummary {
+  const history = LocalStorage.getHistory();
+  const progress = LocalStorage.getWorkoutProgress();
+  const weights = LocalStorage.getAllWeightLog();
+  const performance = getAllPerformanceInputs();
+
+  return {
+    sessions: history.length,
+    completedExercises: Object.values(progress).reduce((total, ids) => total + ids.length, 0),
+    weightEntries: Object.values(weights).reduce((total, entries) => total + entries.length, 0),
+    performanceEntries: Object.keys(performance).length,
+    hasUser: LocalStorage.getUser() !== null,
+    hasActiveTimer: LocalStorage.getSessionTimer() !== null,
+  };
 }
 
 export const LocalStorage = {
@@ -66,17 +115,24 @@ export const LocalStorage = {
   // ── Progreso de ejercicios ────────────────────────────────
 
   getWorkoutProgress(): WorkoutProgress {
-    return get<WorkoutProgress>(KEYS.WORKOUT_PROGRESS) ?? {};
+    const current = get<WorkoutProgress>(KEYS.WORKOUT_PROGRESS) ?? {};
+    const legacy = get<WorkoutProgress>(KEYS.LEGACY_PROGRESS) ?? {};
+    return mergeProgress(current, legacy);
   },
 
   saveWorkoutProgress(data: WorkoutProgress): void {
-    set(KEYS.WORKOUT_PROGRESS, data);
+    const legacy = get<WorkoutProgress>(KEYS.LEGACY_PROGRESS) ?? {};
+    set(KEYS.WORKOUT_PROGRESS, mergeProgress(data, legacy));
   },
 
   // ── Rendimiento por ejercicio (inputs en log modal) ───────
 
   getPerfInput(key: string): string {
     return get<string>(KEYS.PERF_PREFIX + key) ?? '';
+  },
+
+  getAllPerfInputs(): Record<string, string> {
+    return getAllPerformanceInputs();
   },
 
   savePerfInput(key: string, value: string): void {
@@ -153,18 +209,61 @@ export const LocalStorage = {
     remove(KEYS.WEIGHT_LOG);
   },
 
-  // ── Exportar todo (migración a Supabase) ─────────────────
+  // ── Copia local y recuperación ───────────────────────────
 
-  exportAll() {
+  getSummary(): LocalDataSummary {
+    return getSummary();
+  },
+
+  hasRecoverableData(): boolean {
+    const summary = getSummary();
+    return summary.sessions > 0
+      || summary.completedExercises > 0
+      || summary.weightEntries > 0
+      || summary.performanceEntries > 0
+      || summary.hasUser
+      || summary.hasActiveTimer;
+  },
+
+  exportAll(): LocalDataBackup {
     return {
+      version: 1,
       user:      this.getUser(),
       history:   this.getHistory(),
       progress:  this.getWorkoutProgress(),
+      weights:   this.getAllWeightLog(),
+      performance: this.getAllPerfInputs(),
+      sessionTimer: this.getSessionTimer(),
       exportedAt: new Date().toISOString(),
     };
   },
 
+  downloadBackup(): LocalDataSummary {
+    const backup = this.exportAll();
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const date = backup.exportedAt.slice(0, 10);
+
+    link.href = url;
+    link.download = `bluetrain-copia-${date}.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+
+    return getSummary();
+  },
+
   clearAll(): void {
-    Object.values(KEYS).forEach(k => remove(k as string));
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+        if (key.startsWith(KEYS.PERF_PREFIX) || Object.values(KEYS).includes(key as typeof KEYS[keyof typeof KEYS])) {
+          remove(key);
+        }
+      }
+    } catch { /* ignore */ }
   },
 };

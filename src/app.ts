@@ -10,6 +10,7 @@ import {
   closeProfileModal,
   saveProfileChanges,
   confirmClearHistory,
+  exportLocalBackup,
   signOut,
 } from '@/views/profile';
 import { initTimer, closeTimer } from '@/views/timer';
@@ -159,6 +160,7 @@ function _setupEventListeners(): void {
   document.getElementById('profileSaveBtn')?.addEventListener('click', () => void saveProfileChanges());
   document.getElementById('profileCancelBtn')?.addEventListener('click', closeProfileModal);
   document.getElementById('clearHistoryBtn')?.addEventListener('click', () => void confirmClearHistory());
+  document.getElementById('exportDataBtn')?.addEventListener('click', exportLocalBackup);
   document.getElementById('signOutBtn')?.addEventListener('click', () => void signOut());
 
   // Avatar btn → profile (delegado en dashboard, también en header)

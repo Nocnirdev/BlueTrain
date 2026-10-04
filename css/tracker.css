@@ -573,6 +573,8 @@
   border-top: 1px solid var(--border);
 }
 
+.profile-data-actions { margin-top: var(--space-4); }
+
 /* ── Skeleton loaders ───────────────────────────────────── */
 
 @keyframes shimmer {

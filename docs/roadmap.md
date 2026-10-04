@@ -1,41 +1,35 @@
 # BlueTrain — Roadmap
 
-## Estado actual (v1.0)
+## Estado actual
 
-- [x] 7 sesiones completas (3 mesociclos)
-- [x] Animaciones SVG stick figure (40+ ejercicios)
-- [x] Temporizador de descanso con audio + vibración
-- [x] Progress tracking con localStorage
-- [x] Sección Competición con las 8 estaciones oficiales
-- [x] Sección Nutrición con calculadora Mifflin-St Jeor
-- [x] Diseño responsive + dark mode
-- [x] Arquitectura modular CSS/JS/Data separados
-- [x] Accesibilidad ARIA, skip-link, aria-current
+- [x] Recuperación del proyecto Supabase pausado.
+- [x] Autenticación, base de datos y PWA operativas.
+- [x] Panel, entrenamiento, competición, nutrición, historial y perfil.
+- [x] Compilación compatible con Vite 8 y PWA.
+- [x] Copia JSON local de sesiones, progreso, pesos, rendimiento, perfil y temporizador.
+- [x] Sincronización voluntaria de sesiones, progreso y pesos al entrar.
 
-## v1.1 — Contenido
+## Próxima prioridad — Protección de datos
 
-- [ ] Completar Mesociclo 3 sesiones B3 y C3
-- [ ] Biblioteca de ejercicios (página dedicada con filtros)
-- [ ] Planes por división: Open / Pro / Age Group
-- [ ] Calculadoras de composición corporal (IMC, % grasa)
+- [ ] Importación validada de copias JSON, con previsualización y sin duplicados.
+- [ ] Sincronización pendiente y por cuenta cuando no haya conexión.
+- [ ] Mensajes claros y modo local cuando el servicio remoto no esté disponible.
+- [ ] Comprobación visible de que una nueva versión de la PWA se ha instalado.
 
-## v1.2 — UX
+## Contenido y entrenamiento
 
-- [ ] PWA: manifest.json + Service Worker (offline completo)
-- [ ] Onboarding: formulario de nivel y objetivos
-- [ ] Modo modo claro (light theme toggle)
-- [ ] Animaciones de transición entre secciones
+- [ ] Completar las sesiones B3 y C3 del tercer mesociclo.
+- [ ] Biblioteca de ejercicios con filtros.
+- [ ] Planes por división: Open, Pro y Age Group.
+- [ ] Calculadoras de composición corporal.
 
-## v2.0 — SaaS
+## Seguimiento y experiencia
 
-- [ ] Auth: registro/login (email + OAuth)
-- [ ] Backend API REST (Node/Deno o Supabase)
-- [ ] Base de datos de progreso por usuario
-- [ ] Dashboard personalizado (gráficas de volumen, frecuencia)
-- [ ] Planes generados dinámicamente por perfil
+- [ ] Gráficas de evolución de carga con histórico completo.
+- [ ] Registro de medidas corporales.
+- [ ] Modo claro.
+- [ ] Términos de uso y política de privacidad revisados.
 
-## v2.1 — Comunidad
+## Criterio de trabajo
 
-- [ ] Compartir sesiones / resultados
-- [ ] Comparativa de tiempos en simulaciones
-- [ ] Coach dashboard (multi-atleta)
+Cada mejora se realizará en una rama o cambio acotado, con comprobación de tipos, compilación, prueba visual y publicación de prueba antes de producción.

@@ -176,6 +176,7 @@
   transition: color 0.15s;
 }
 .auth-link:hover { color: var(--text-2); }
+.auth-backup-link { padding-top: var(--space-2); }
 
 .auth-link-inline {
   color: var(--text-2);

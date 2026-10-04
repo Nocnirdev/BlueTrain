@@ -1,67 +1,50 @@
 # BlueTrain — Arquitectura
 
-## Estructura de carpetas
+## Aplicación actual
+
+BlueTrain es una aplicación web construida con TypeScript estricto y Vite 8. No usa un framework de interfaz: el código se organiza en módulos ES y cada vista se renderiza desde `src/`.
 
 ```
 BlueTrain/
-├── index.html              ← Punto de entrada limpio (HTML semántico, sin lógica)
-├── assets/
-│   ├── images/             ← Imágenes (logo, hero, ejercicios)
-│   ├── icons/              ← Iconos SVG
-│   └── videos/             ← Vídeos de referencia
-├── css/
-│   ├── main.css            ← Variables CSS, reset, layout, header, nav, progress bar
-│   ├── components.css      ← Todos los componentes UI + animaciones CSS keyframes
-│   └── responsive.css      ← Media queries, reduced-motion, safe-area iOS
-├── js/
-│   ├── app.js              ← Punto de entrada JS: init, view switching, event listeners
-│   ├── workouts.js         ← Renderizado de sesiones, progress tracking, localStorage
-│   ├── nutrition.js        ← Sección Competición y Nutrición, calculadora Mifflin-St Jeor
-│   └── utils.js            ← Timer de descanso, formatters, updateHeaderHeight
-├── data/
-│   ├── animations.js       ← ANIMS: biblioteca de SVG stick figures (400×300)
-│   ├── workouts.js         ← WORKOUTS_DATA: 7 sesiones, 3 mesociclos
-│   └── stations.js         ← STATIONS: 8 estaciones de carrera funcional
-├── modules/
-│   ├── training/           ← Módulo futuro: planes personalizados
-│   ├── competition-functional/ ← Módulo futuro: prep específica de carrera
-│   ├── nutrition/          ← Módulo futuro: tracking nutricional
-│   └── dashboard/          ← Módulo futuro: métricas y progreso
-└── docs/
-    ├── architecture.md     ← Este documento
-    ├── roadmap.md          ← Roadmap de funcionalidades
-    └── sources.md          ← Fuentes científicas
+├── src/
+│   ├── app.ts                 ← Arranque, navegación y eventos globales
+│   ├── main.ts                ← Punto de entrada de Vite
+│   ├── components/            ← Componentes reutilizables
+│   ├── data/                  ← Sesiones, estaciones, animaciones y claves
+│   ├── lib/                   ← Cliente Supabase y utilidades HTML seguras
+│   ├── services/              ← Autenticación, datos y almacenamiento local
+│   ├── types/                 ← Tipos compartidos
+│   └── views/                 ← Una vista por pantalla de la aplicación
+├── css/                        ← Sistema visual, componentes y adaptación responsive
+├── public/                     ← Manifest e iconos de la PWA
+├── supabase/schema.sql         ← Tablas, índices y políticas de acceso
+├── vite.config.ts              ← Compilación y service worker
+└── vercel.json                 ← Cabeceras de seguridad en producción
 ```
 
-## Separación de responsabilidades
+## Capas y responsabilidades
 
 | Capa | Responsabilidad |
-|------|----------------|
-| HTML (`index.html`) | Estructura semántica, accesibilidad, carga de assets |
-| CSS (`css/`) | Presentación, animaciones, responsive |
-| JS (`js/`) | Lógica de la aplicación, interacciones, renderizado |
-| Datos (`data/`) | Contenido desacoplado: ejercicios, sesiones, estaciones |
-| Módulos (`modules/`) | Expansión futura sin tocar el core |
+|---|---|
+| `src/main.ts` | Carga los estilos e inicia la aplicación. |
+| `src/app.ts` | Gestiona el acceso, el cambio de pantalla y los eventos entre vistas. |
+| `src/views/` | Renderiza el contenido de cada pantalla. |
+| `src/services/` | Centraliza autenticación, Supabase y la caché local. |
+| `src/data/` | Mantiene separado el contenido estático del entrenamiento. |
+| `src/lib/` | Agrupa el cliente de Supabase y el escape de HTML. |
 
-## Orden de carga de scripts
+## Datos y acceso
 
-```html
-data/animations.js   → define ANIMS (SVG strings)
-data/workouts.js     → define WORKOUTS_DATA
-data/stations.js     → define STATIONS
-js/utils.js          → funciones helper
-js/workouts.js       → depende de ANIMS, WORKOUTS_DATA
-js/nutrition.js      → depende de STATIONS
-js/app.js            → punto de entrada, llama a init()
-```
+La aplicación usa Supabase para cuentas y registros sincronizados. Las tablas `sessions`, `workout_progress` y `weight_logs` tienen Row Level Security, por lo que cada cuenta solo accede a sus propios datos.
 
-Sin módulos ES6 ni bundler → funciona como archivo local sin servidor.
+`src/services/db.ts` es el único punto de acceso a los datos. Cuando una operación remota falla, conserva una copia local para no perder el registro inmediato. La copia JSON incluye sesiones, progreso, pesos, borradores de rendimiento, perfil y temporizador. Tras iniciar sesión, la persona usuaria puede aprobar la sincronización de sesiones, progreso y pesos; los borradores y el temporizador siguen siendo locales hasta una fase posterior.
 
-## Escalabilidad futura
+## Publicación y funcionamiento sin conexión
 
-Para evolucionar hacia SaaS añadir:
-1. **Auth**: módulo `modules/auth/` con JWT o OAuth
-2. **API**: sustituir `data/*.js` por `fetch('/api/workouts')` en `app.js`
-3. **DB**: Supabase / Firebase como backend
-4. **Build**: Vite o esbuild para bundling, tree-shaking y code splitting
-5. **PWA**: añadir `manifest.json` y Service Worker para offline completo
+Vite genera la versión de producción y `vite-plugin-pwa` crea el service worker. Vercel publica la rama `main` y aplica las cabeceras de seguridad definidas en `vercel.json`.
+
+Las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` se configuran en Vercel y no se guardan en Git. Cualquier cambio en ellas requiere un nuevo despliegue.
+
+## Material heredado
+
+Las carpetas raíz `js/` y `data/` contienen la implementación anterior sin TypeScript. Se conservan como referencia histórica, pero la versión publicada usa exclusivamente `src/` y Vite. No deben modificarse al añadir funciones nuevas salvo que se decida retirarlas en una limpieza separada.

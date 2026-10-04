@@ -26,7 +26,7 @@ The database schema lives in `supabase/schema.sql` — run it in the Supabase SQ
 
 ## Architecture
 
-Vanilla TypeScript with ES modules, no frontend framework. Vite 6 as bundler. Path alias `@/` maps to `src/`.
+Vanilla TypeScript with ES modules, no frontend framework. Vite 8 as bundler. Path alias `@/` maps to `src/`.
 
 **Layer responsibilities:**
 
@@ -43,7 +43,7 @@ Vanilla TypeScript with ES modules, no frontend framework. Vite 6 as bundler. Pa
 
 **Data flow — authenticated vs. offline:**
 
-`DB` service (`src/services/db.ts`) is the single access point for persistence. It checks `Auth.getState().userId`: if authenticated it calls Supabase, otherwise falls back to `LocalStorage`. Writes always update localStorage as a local cache. On first login, `DB.migrateLocalData()` migrates anonymous sessions to Supabase.
+`DB` service (`src/services/db.ts`) is the single access point for persistence. It checks `Auth.getState().userId`: if authenticated it calls Supabase, otherwise falls back to `LocalStorage`. Writes always update localStorage as a local cache. After login, the user can explicitly approve synchronization of local sessions, progress and weights to Supabase.
 
 **View switching:**
 

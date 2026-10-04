@@ -71,8 +71,9 @@ export const Auth = {
   // ── Sign in ───────────────────────────────────────────────
 
   async signIn(email: string, password: string): Promise<{ error: string | null }> {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return { error: _mapError(error.message) };
+    if (data.user) await _loadProfile(data.user.id, data.user.email ?? email);
     return { error: null };
   },
 

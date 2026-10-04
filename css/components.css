@@ -58,7 +58,6 @@
 .btn--full { width: 100%; }
 
 /* Legacy aliases — mantenidos para compatibilidad con el HTML existente */
-.btn-primary, .btn-save { @extend .btn; background: var(--accent); color: #000; border: none; }
 .btn-primary { display: inline-flex; align-items: center; justify-content: center; padding: 9px var(--space-4); border-radius: var(--radius-md); font-family: var(--font-sans); font-size: var(--text-sm); font-weight: 600; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; background: var(--accent); color: #000; border: none; }
 .btn-primary:active { opacity: 0.85; }
 .btn-save { display: flex; align-items: center; justify-content: center; flex: 2; padding: 11px; border-radius: var(--radius-md); font-family: var(--font-sans); font-size: var(--text-sm); font-weight: 600; cursor: pointer; transition: opacity 0.15s; background: var(--accent); color: #000; border: none; }

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">BlueTrain</title>
+  <rect width="512" height="512" rx="112" fill="#0a0a0a"/>
+  <path d="M132 132h142c62 0 106 37 106 96 0 31-14 58-38 73 32 14 52 45 52 83 0 64-48 100-118 100H132V132Zm70 62v79h65c28 0 43-14 43-40 0-25-15-39-43-39h-65Zm0 142v86h73c31 0 48-15 48-43 0-29-17-43-48-43h-73Z" fill="#d4ff00"/>
+  <path d="M173 101h166" stroke="#f5f7f2" stroke-width="20" stroke-linecap="round" opacity=".9"/>
+  <path d="M173 411h166" stroke="#f5f7f2" stroke-width="20" stroke-linecap="round" opacity=".9"/>
+</svg>

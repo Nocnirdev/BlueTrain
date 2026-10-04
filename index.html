@@ -8,10 +8,12 @@
   <meta property="og:title" content="BlueTrain · Entrena. Registra. Evoluciona.">
   <meta property="og:description" content="Tracking de entrenamientos, dashboard de rendimiento y nutrición basada en evidencia.">
   <meta property="og:type" content="website">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="BlueTrain">
-  <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BlueTrain">
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icons/icon.svg">
+    <link rel="manifest" href="/manifest.json">
   <title>BlueTrain · Tracking de Rendimiento</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,6 +188,11 @@
           <button class="btn-save" id="profileSaveBtn">Guardar</button>
           <button class="btn-cancel" id="profileCancelBtn">Cancelar</button>
         </div>
+        <div class="profile-data-actions">
+          <button class="btn btn--secondary btn--full" id="exportDataBtn" type="button">
+            Descargar copia de seguridad
+          </button>
+        </div>
         <div class="danger-zone">
           <button class="btn-danger" id="clearHistoryBtn">
             Borrar todo el historial
@@ -210,10 +217,10 @@
       </div>
     </div>
 
-    <!-- TOAST -->
-    <div class="bt-toast" id="btToast" aria-live="polite" aria-atomic="true"></div>
-
   </div><!-- /appShell -->
+
+  <!-- TOAST: fuera del shell para informar también desde la pantalla de acceso -->
+  <div class="bt-toast" id="btToast" aria-live="polite" aria-atomic="true"></div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

@@ -1,7 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { LocalStorage } from './storage';
 import { Auth } from './auth';
-import type { SessionEntry, WorkoutProgress, WeightEntry } from '@/types';
+import type { LocalMigrationResult, SessionEntry, WorkoutProgress, WeightEntry } from '@/types';
 
 // ── Capa de datos unificada ───────────────────────────────────
 // Si el usuario está autenticado → Supabase.
@@ -85,8 +85,9 @@ export const DB = {
   async getTotalSessions(): Promise<number> {
     const { userId } = Auth.getState();
     if (!userId) return LocalStorage.getTotalSessions();
-    const { count } = await supabase
+    const { count, error } = await supabase
       .from('sessions').select('id', { count: 'exact', head: true }).eq('user_id', userId);
+    if (error) { console.error(error); return LocalStorage.getTotalSessions(); }
     return count ?? 0;
   },
 
@@ -97,19 +98,21 @@ export const DB = {
     const monday = new Date(now);
     monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
     monday.setHours(0, 0, 0, 0);
-    const { count } = await supabase
+    const { count, error } = await supabase
       .from('sessions')
       .select('id', { count: 'exact', head: true })
       .eq('user_id', userId)
       .gte('date', monday.toISOString().split('T')[0]);
+    if (error) { console.error(error); return LocalStorage.getWeeklySessions(); }
     return count ?? 0;
   },
 
   async getStreak(): Promise<number> {
     const { userId } = Auth.getState();
     if (!userId) return LocalStorage.getStreak();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('sessions').select('date').eq('user_id', userId).order('date', { ascending: false });
+    if (error) { console.error(error); return LocalStorage.getStreak(); }
     const dates = [...new Set((data ?? []).map(r => r.date as string))].sort().reverse();
     if (!dates.length) return 0;
     let streak = 0;
@@ -127,7 +130,8 @@ export const DB = {
   async getTotalMinutes(): Promise<number> {
     const { userId } = Auth.getState();
     if (!userId) return LocalStorage.getTotalMinutes();
-    const { data } = await supabase.from('sessions').select('duration').eq('user_id', userId);
+    const { data, error } = await supabase.from('sessions').select('duration').eq('user_id', userId);
+    if (error) { console.error(error); return LocalStorage.getTotalMinutes(); }
     return (data ?? []).reduce((sum, r) => sum + ((r.duration as number) || 0), 0);
   },
 
@@ -176,16 +180,75 @@ export const DB = {
 
   // ── Migración localStorage → Supabase ────────────────────
 
-  async migrateLocalData(): Promise<number> {
+  async migrateLocalData(): Promise<LocalMigrationResult> {
+    const result: LocalMigrationResult = { sessions: 0, progress: 0, weights: 0, errors: [] };
     const { userId } = Auth.getState();
-    if (!userId) return 0;
-    const localHistory = LocalStorage.getHistory();
-    if (!localHistory.length) return 0;
+    if (!userId) {
+      result.errors.push('No hay una sesión activa para sincronizar los datos locales.');
+      return result;
+    }
 
-    const rows = localHistory.map(s => _toRow(s, userId));
-    const { error } = await supabase.from('sessions').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
-    if (error) { console.error('Migration error:', error); return 0; }
-    return localHistory.length;
+    const localHistory = LocalStorage.getHistory();
+    if (localHistory.length) {
+      const rows = localHistory.map(s => _toRow(s, userId));
+      const { error } = await supabase.from('sessions').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+      if (error) result.errors.push('No se pudieron sincronizar las sesiones.');
+      else result.sessions = localHistory.length;
+    }
+
+    const localProgress = LocalStorage.getWorkoutProgress();
+    const progressEntries = Object.entries(localProgress);
+    if (progressEntries.length) {
+      const { data, error } = await supabase
+        .from('workout_progress')
+        .select('session_key, completed_exercises')
+        .eq('user_id', userId);
+
+      if (error) {
+        result.errors.push('No se pudo sincronizar el progreso de ejercicios.');
+      } else {
+        const remoteProgress = new Map(
+          (data ?? []).map(row => [
+            row['session_key'] as string,
+            (row['completed_exercises'] as string[] | null) ?? [],
+          ])
+        );
+        const rows = progressEntries.map(([sessionKey, completedExercises]) => ({
+          user_id: userId,
+          session_key: sessionKey,
+          completed_exercises: [...new Set([
+            ...(remoteProgress.get(sessionKey) ?? []),
+            ...completedExercises,
+          ])],
+          updated_at: new Date().toISOString(),
+        }));
+        const { error: upsertError } = await supabase
+          .from('workout_progress')
+          .upsert(rows, { onConflict: 'user_id,session_key' });
+        if (upsertError) result.errors.push('No se pudo guardar el progreso de ejercicios.');
+        else result.progress = rows.length;
+      }
+    }
+
+    const localWeights = Object.values(LocalStorage.getAllWeightLog()).flat();
+    if (localWeights.length) {
+      const rows = localWeights.map(entry => ({
+        id:           entry.id,
+        user_id:      userId,
+        exercise_key: entry.exerciseKey,
+        date:         entry.date,
+        weight:       entry.weight,
+        session_key:  entry.sessionKey ?? null,
+        recorded_at:  entry.recordedAt,
+      }));
+      const { error } = await supabase
+        .from('weight_logs')
+        .upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+      if (error) result.errors.push('No se pudieron sincronizar los pesos registrados.');
+      else result.weights = rows.length;
+    }
+
+    return result;
   },
 };
 

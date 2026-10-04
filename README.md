@@ -12,7 +12,7 @@
 
 | Capa | Tecnología |
 |------|-----------|
-| Bundler | Vite 6 |
+| Bundler | Vite 8 |
 | Lenguaje | TypeScript 5 (strict) |
 | Auth + DB | Supabase (PostgreSQL + Row Level Security) |
 | Offline | PWA — Service Worker (Workbox) |
@@ -68,7 +68,8 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 - Recuperación de contraseña
 - Perfil de usuario con nombre y objetivo de entrenamiento
 - Estadísticas del perfil: sesiones, racha y tiempo total
-- Migración automática de datos locales al crear cuenta
+- Copia descargable de los datos locales desde el acceso y el perfil
+- Sincronización voluntaria de sesiones, progreso y pesos al entrar
 - Cada usuario solo accede a sus propios datos (RLS en PostgreSQL)
 
 ---

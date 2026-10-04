@@ -8,6 +8,15 @@ import { renderDashboard } from './dashboard';
 import { renderHistory } from './history';
 import { esc, $maybe } from '@/lib/html';
 
+export function exportLocalBackup(): void {
+  const summary = LocalStorage.downloadBackup();
+  const parts: string[] = [];
+  if (summary.sessions) parts.push(`${summary.sessions} sesiones`);
+  if (summary.weightEntries) parts.push(`${summary.weightEntries} pesos`);
+  if (summary.completedExercises) parts.push(`${summary.completedExercises} ejercicios marcados`);
+  showToast(parts.length ? `Copia descargada: ${parts.join(', ')}.` : 'Copia local descargada.', 'success');
+}
+
 export async function showProfileModal(): Promise<void> {
   const { profile } = Auth.getState();
   if (!profile) return;

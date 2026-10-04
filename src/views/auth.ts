@@ -2,6 +2,7 @@ import { Auth } from '@/services/auth';
 import { DB } from '@/services/db';
 import { LocalStorage } from '@/services/storage';
 import { showToast } from '@/components/toast';
+import { showConfirm } from '@/components/dialog';
 import { esc, $maybe } from '@/lib/html';
 import type { AuthMode } from '@/types';
 
@@ -60,6 +61,7 @@ export function renderAuthView(): void {
       </form>
 
       <button class="auth-link" id="authForgotBtn">¿Olvidaste tu contraseña?</button>
+      <button class="auth-link auth-backup-link" id="authBackupBtn" type="button">Descargar copia de tus datos locales</button>
 
       <!-- Forgot password form (oculto por defecto) -->
       <div id="authForgotForm" style="display:none;">
@@ -116,6 +118,10 @@ function _setupListeners(): void {
   $maybe('authForgotBtn')?.addEventListener('click', () => _setMode('forgot'));
   $maybe('authForgotBack')?.addEventListener('click', () => _setMode('login'));
   $maybe('authForgotSubmit')?.addEventListener('click', () => void _handleForgot());
+  $maybe('authBackupBtn')?.addEventListener('click', () => {
+    const summary = LocalStorage.downloadBackup();
+    showToast(_backupMessage(summary), 'success');
+  });
 }
 
 function _setMode(mode: AuthMode): void {
@@ -183,7 +189,7 @@ async function _handleSubmit(): Promise<void> {
     return;
   }
 
-  // Login exitoso → comprobar migración
+  // Login exitoso → ofrecer una sincronización voluntaria y recuperable.
   void _offerMigration();
 }
 
@@ -197,12 +203,39 @@ async function _handleForgot(): Promise<void> {
 }
 
 async function _offerMigration(): Promise<void> {
-  const localCount = LocalStorage.getHistory().length;
-  if (!localCount) return;
-  const migrated = await DB.migrateLocalData();
-  if (migrated > 0) {
-    showToast(`${migrated} sesiones importadas a tu cuenta.`, 'info');
+  const summary = LocalStorage.getSummary();
+  if (!summary.sessions && !summary.completedExercises && !summary.weightEntries) return;
+
+  const localParts: string[] = [];
+  if (summary.sessions) localParts.push(`${summary.sessions} sesiones`);
+  if (summary.weightEntries) localParts.push(`${summary.weightEntries} pesos`);
+  if (summary.completedExercises) localParts.push(`${summary.completedExercises} ejercicios marcados`);
+  const confirmed = await showConfirm(
+    `Hemos encontrado ${localParts.join(', ')} en este navegador. Antes de sincronizar, descarga una copia de seguridad. ¿Quieres sincronizar ahora las sesiones, el progreso y los pesos?`,
+    'Sincronizar ahora'
+  );
+  if (!confirmed) {
+    showToast('Tus datos locales se conservan en este navegador.', 'info');
+    return;
   }
+
+  const migrated = await DB.migrateLocalData();
+  const migratedParts: string[] = [];
+  if (migrated.sessions) migratedParts.push(`${migrated.sessions} sesiones`);
+  if (migrated.progress) migratedParts.push(`${migrated.progress} progresos`);
+  if (migrated.weights) migratedParts.push(`${migrated.weights} pesos`);
+  if (migratedParts.length) {
+    showToast(`Datos locales revisados y sincronizados: ${migratedParts.join(', ')}.`, 'info');
+  }
+  if (migrated.errors.length) showToast('Conservamos tu copia local: algunos datos no se pudieron sincronizar todavía.', 'error');
+}
+
+function _backupMessage(summary: ReturnType<typeof LocalStorage.getSummary>): string {
+  const parts: string[] = [];
+  if (summary.sessions) parts.push(`${summary.sessions} sesiones`);
+  if (summary.weightEntries) parts.push(`${summary.weightEntries} pesos`);
+  if (summary.completedExercises) parts.push(`${summary.completedExercises} ejercicios marcados`);
+  return parts.length ? `Copia descargada: ${parts.join(', ')}.` : 'Copia local descargada.';
 }
 
 function _showError(msg: string): void {
