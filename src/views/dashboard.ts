@@ -221,12 +221,12 @@ function _quickActions(): string {
   return `
     <div class="section-title-bar"><h3>Accesos rápidos</h3></div>
     <div class="quick-actions">
-      <button class="quick-btn" id="qaGoTrain" aria-label="Ir a Entrena">
+      <button class="quick-btn" id="qaGoTrain" aria-label="Ir a Funcional">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polygon points="5 3 19 12 5 21 5 3"/>
         </svg>
-        <span>Entrena</span>
+        <span>Funcional</span>
       </button>
       <button class="quick-btn" id="qaGoCompetition" aria-label="Ir a Competición">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"

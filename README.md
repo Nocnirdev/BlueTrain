@@ -28,7 +28,7 @@ Sin frameworks frontend. Vanilla TypeScript con módulos ES, arquitectura en cap
 ### Dashboard
 - Saludo personalizado con mensaje motivacional según racha y sesiones
 - **Estadísticas en tiempo real:** sesiones totales, sesiones semanales, racha de días, tiempo acumulado
-- **Accesos rápidos:** navegación directa a Entrena, Competición, Nutrición e Historial
+- **Accesos rápidos:** navegación directa a Funcional, Competición, Nutrición e Historial
 - **Progreso comparativo:** sesiones de esta semana vs semana anterior, este mes vs mes anterior, este año vs año anterior (con % de variación)
 - Gráfico de actividad semanal (L–D)
 - Registro de peso, cintura y cadera con gráficas de evolución
