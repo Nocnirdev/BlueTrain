@@ -20,7 +20,7 @@ export default defineConfig({
   },
   plugins: [
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['icons/icon.svg'],
       manifest: false, // usamos public/manifest.json directamente
       workbox: {

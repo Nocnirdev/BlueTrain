@@ -1293,6 +1293,39 @@
 .bt-toast.bt-toast--error   { border-color: var(--error-border);   color: var(--error);   }
 .bt-toast.bt-toast--info    { border-color: var(--info-border);    color: var(--info);    }
 
+/* ── Actualización PWA ─────────────────────────────────── */
+
+.pwa-update {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--space-5) + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(calc(100% - (var(--space-4) * 2)), 460px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--border-strong);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 410;
+}
+.pwa-update[hidden] { display: none; }
+.pwa-update__message {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--text-md);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+}
+.pwa-update__action {
+  flex: 0 0 auto;
+  min-height: 36px;
+}
+
 /* ── Stick figure CSS keyframes ─────────────────────────── */
 
 @keyframes squat-down { 0%, 100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(18px) scaleY(0.85); } }

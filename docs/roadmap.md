@@ -14,7 +14,7 @@
 - [x] Importación validada de copias JSON, con previsualización y sin duplicados.
 - [x] Sincronización pendiente y por cuenta cuando no haya conexión.
 - [x] Mensajes claros y modo local cuando el servicio remoto no esté disponible.
-- [ ] Comprobación visible de que una nueva versión de la PWA se ha instalado.
+- [x] Comprobación visible de que una nueva versión de la PWA está lista para instalar.
 
 ## Contenido y entrenamiento
 

@@ -227,6 +227,14 @@
 
   </div><!-- /appShell -->
 
+  <!-- ACTUALIZACIÓN PWA: se muestra solo cuando hay una versión nueva lista -->
+  <div class="pwa-update" id="pwaUpdate" role="region" aria-label="Actualización disponible" hidden>
+    <p class="pwa-update__message" aria-live="polite" aria-atomic="true">Hay una nueva versión lista.</p>
+    <button class="btn btn--primary pwa-update__action" id="pwaUpdateBtn" type="button">
+      Actualizar
+    </button>
+  </div>
+
   <!-- TOAST: fuera del shell para informar también desde la pantalla de acceso -->
   <div class="bt-toast" id="btToast" aria-live="polite" aria-atomic="true"></div>
 

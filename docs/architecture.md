@@ -43,7 +43,7 @@ La copia JSON incluye sesiones, progreso, pesos, borradores de rendimiento, perf
 
 ## Publicación y funcionamiento sin conexión
 
-Vite genera la versión de producción y `vite-plugin-pwa` crea el service worker. Vercel publica la rama `main` y aplica las cabeceras de seguridad definidas en `vercel.json`.
+Vite genera la versión de producción y `vite-plugin-pwa` crea el service worker. Cuando detecta una versión nueva, la aplicación muestra un aviso y solo la aplica al pulsar «Actualizar»; así no interrumpe un entrenamiento en curso. Vercel publica la rama `main` y aplica las cabeceras de seguridad definidas en `vercel.json`.
 
 Las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` se configuran en Vercel y no se guardan en Git. Cualquier cambio en ellas requiere un nuevo despliegue.
 
