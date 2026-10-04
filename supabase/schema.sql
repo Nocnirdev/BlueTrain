@@ -84,6 +84,9 @@ CREATE POLICY "progress_upsert" ON public.workout_progress
 CREATE POLICY "progress_update" ON public.workout_progress
   FOR UPDATE USING (auth.uid() = user_id);
 
+CREATE POLICY "progress_delete" ON public.workout_progress
+  FOR DELETE USING (auth.uid() = user_id);
+
 -- ── Función: updated_at automático ─────────────────────────────
 
 CREATE OR REPLACE FUNCTION public.handle_updated_at()

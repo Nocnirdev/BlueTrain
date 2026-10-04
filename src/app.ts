@@ -11,7 +11,7 @@ import {
   showProfileModal,
   closeProfileModal,
   saveProfileChanges,
-  confirmClearHistory,
+  confirmClearTrainingData,
   exportLocalBackup,
   importLocalBackup,
   openBackupImport,
@@ -173,7 +173,7 @@ function _setupEventListeners(): void {
   // Profile modal buttons
   document.getElementById('profileSaveBtn')?.addEventListener('click', () => void saveProfileChanges());
   document.getElementById('profileCancelBtn')?.addEventListener('click', closeProfileModal);
-  document.getElementById('clearHistoryBtn')?.addEventListener('click', () => void confirmClearHistory());
+  document.getElementById('clearTrainingDataBtn')?.addEventListener('click', () => void confirmClearTrainingData());
   document.getElementById('exportDataBtn')?.addEventListener('click', exportLocalBackup);
   document.getElementById('importDataBtn')?.addEventListener('click', openBackupImport);
   document.getElementById('importDataInput')?.addEventListener('change', e => {

@@ -332,6 +332,21 @@ export const LocalStorage = {
     remove(KEYS.HISTORY);
   },
 
+  clearTrainingData(): void {
+    remove(KEYS.HISTORY);
+    remove(KEYS.WORKOUT_PROGRESS);
+    remove(KEYS.LEGACY_PROGRESS);
+    remove(KEYS.SESSION_START);
+    remove(KEYS.WEIGHT_LOG);
+
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key?.startsWith(KEYS.PERF_PREFIX)) remove(key);
+      }
+    } catch { /* ignore */ }
+  },
+
   // ── Progreso de ejercicios ────────────────────────────────
 
   getWorkoutProgress(): WorkoutProgress {

@@ -1,4 +1,3 @@
-import { supabase } from '@/lib/supabase';
 import { Auth } from '@/services/auth';
 import { DB } from '@/services/db';
 import { LocalStorage } from '@/services/storage';
@@ -147,24 +146,18 @@ export async function saveProfileChanges(): Promise<void> {
   void renderDashboard();
 }
 
-export async function confirmClearHistory(): Promise<void> {
+export async function confirmClearTrainingData(): Promise<void> {
   const confirmed = await showConfirm(
-    '¿Eliminar todo el historial de entrenamientos? Esta acción no se puede deshacer.',
-    'Eliminar todo'
+    'Se borrarán sesiones, pesos, progreso, borradores y temporizador de este navegador y de tu cuenta. Esta acción no se puede deshacer.',
+    'Borrar datos'
   );
   if (!confirmed) return;
 
-  LocalStorage.clearHistory();
-
-  const { userId } = Auth.getState();
-  if (userId) {
-    const { error } = await supabase
-      .from('sessions').delete().eq('user_id', userId);
-    if (error) console.error('Error clearing sessions:', error);
-  }
+  const error = await DB.clearTrainingData();
+  if (error) { showToast(error, 'error'); return; }
 
   closeProfileModal();
-  showToast('Historial eliminado');
+  showToast('Datos de entrenamiento eliminados');
   void renderDashboard();
   void renderHistory();
 }

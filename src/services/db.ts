@@ -54,6 +54,28 @@ export const DB = {
     if (error) _queue(userId, 'session_delete', { sessionId: id }, error.message);
   },
 
+  async clearTrainingData(): Promise<string | null> {
+    const { userId } = Auth.getState();
+    if (!userId) {
+      LocalStorage.clearTrainingData();
+      return null;
+    }
+    if (_isOffline()) return 'Necesitas conexión para borrar también la copia de tu cuenta.';
+
+    const results = await Promise.all([
+      supabase.from('sessions').delete().eq('user_id', userId),
+      supabase.from('workout_progress').delete().eq('user_id', userId),
+      supabase.from('weight_logs').delete().eq('user_id', userId),
+    ]);
+    if (results.some(({ error }) => error)) {
+      return 'No se pudieron borrar todos los datos. No se ha eliminado la copia local.';
+    }
+
+    LocalStorage.clearTrainingData();
+    LocalStorage.clearSyncQueueKinds(userId, ['session_upsert', 'session_delete', 'progress_upsert', 'weight_upsert']);
+    return null;
+  },
+
   // ── Progreso de ejercicios (checkboxes) ───────────────────
 
   async getWorkoutProgress(): Promise<WorkoutProgress> {
