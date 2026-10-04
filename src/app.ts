@@ -1,4 +1,6 @@
 import { Auth } from '@/services/auth';
+import { DB } from '@/services/db';
+import { showToast } from '@/components/toast';
 import { renderDashboard } from '@/views/dashboard';
 import { renderSession, saveLoggedSession, updateRpeVal, closeLogModal } from '@/views/training';
 import { renderCompetition } from '@/views/competition';
@@ -11,7 +13,11 @@ import {
   saveProfileChanges,
   confirmClearHistory,
   exportLocalBackup,
+  importLocalBackup,
+  openBackupImport,
   signOut,
+  syncLocalData,
+  updateSyncStatus,
 } from '@/views/profile';
 import { initTimer, closeTimer } from '@/views/timer';
 import type { ViewName } from '@/types';
@@ -98,15 +104,22 @@ export async function init(): Promise<void> {
       _showAppShell();
       switchView('dashboard');
       setTimeout(() => void renderSession(_currentSession), 300);
+      void _flushPendingSync();
     } else {
       _showAuthGate();
     }
+    updateSyncStatus();
   });
 
   _setupEventListeners();
   initTimer();
   _updateHeaderHeight();
   window.addEventListener('resize', _updateHeaderHeight);
+  window.addEventListener('online', () => void _flushPendingSync(true));
+  window.addEventListener('offline', () => {
+    updateSyncStatus();
+    showToast('Sin conexión: los cambios nuevos quedarán guardados en este navegador.', 'info');
+  });
 
   // Custom events
   document.addEventListener('bt:showProfile', () => void showProfileModal());
@@ -116,6 +129,7 @@ export async function init(): Promise<void> {
   });
   document.addEventListener('bt:viewAll', () => switchView('history'));
   document.addEventListener('bt:goTrain', () => switchView('training'));
+  document.addEventListener('bt:syncQueueChanged', updateSyncStatus);
 }
 
 function _setupEventListeners(): void {
@@ -161,6 +175,14 @@ function _setupEventListeners(): void {
   document.getElementById('profileCancelBtn')?.addEventListener('click', closeProfileModal);
   document.getElementById('clearHistoryBtn')?.addEventListener('click', () => void confirmClearHistory());
   document.getElementById('exportDataBtn')?.addEventListener('click', exportLocalBackup);
+  document.getElementById('importDataBtn')?.addEventListener('click', openBackupImport);
+  document.getElementById('importDataInput')?.addEventListener('change', e => {
+    const input = e.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (file) void importLocalBackup(file);
+  });
+  document.getElementById('syncDataBtn')?.addEventListener('click', () => void syncLocalData());
   document.getElementById('signOutBtn')?.addEventListener('click', () => void signOut());
 
   // Avatar btn → profile (delegado en dashboard, también en header)
@@ -176,6 +198,14 @@ function _setupEventListeners(): void {
     if (target.id === 'qaGoNutrition')    { switchView('nutrition');   return; }
     if (target.id === 'qaGoHistory')      { switchView('history');     return; }
   });
+}
+
+async function _flushPendingSync(announce = false): Promise<void> {
+  const result = await DB.flushPendingOperations();
+  updateSyncStatus();
+  if (announce && result.synced) {
+    showToast(`${result.synced} cambio${result.synced === 1 ? '' : 's'} pendiente${result.synced === 1 ? '' : 's'} sincronizado${result.synced === 1 ? '' : 's'}.`, 'success');
+  }
 }
 
 function _updateHeaderHeight(): void {

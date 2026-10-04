@@ -1,7 +1,14 @@
 import { supabase } from '@/lib/supabase';
 import { LocalStorage } from './storage';
 import { Auth } from './auth';
-import type { LocalMigrationResult, SessionEntry, WorkoutProgress, WeightEntry } from '@/types';
+import type {
+  LocalMigrationResult,
+  SessionEntry,
+  SyncQueueFlushResult,
+  SyncQueueOperation,
+  WorkoutProgress,
+  WeightEntry,
+} from '@/types';
 
 // ── Capa de datos unificada ───────────────────────────────────
 // Si el usuario está autenticado → Supabase.
@@ -28,20 +35,23 @@ export const DB = {
 
   async addSession(session: SessionEntry): Promise<void> {
     const { userId } = Auth.getState();
-    if (!userId) { LocalStorage.addSession(session); return; }
-
-    const { error } = await supabase.from('sessions').insert(_toRow(session, userId));
-    if (error) console.error('DB.addSession error:', error);
-    // También cache local para velocidad
     LocalStorage.addSession(session);
+    if (!userId) return;
+    if (_isOffline()) { _queue(userId, 'session_upsert', session); return; }
+
+    const { error } = await supabase
+      .from('sessions')
+      .upsert(_toRow(session, userId), { onConflict: 'id', ignoreDuplicates: true });
+    if (error) _queue(userId, 'session_upsert', session, error.message);
   },
 
   async deleteSession(id: string): Promise<void> {
     const { userId } = Auth.getState();
     LocalStorage.deleteSession(id);
     if (!userId) return;
+    if (_isOffline()) { _queue(userId, 'session_delete', { sessionId: id }); return; }
     const { error } = await supabase.from('sessions').delete().eq('id', id).eq('user_id', userId);
-    if (error) console.error('DB.deleteSession error:', error);
+    if (error) _queue(userId, 'session_delete', { sessionId: id }, error.message);
   },
 
   // ── Progreso de ejercicios (checkboxes) ───────────────────
@@ -71,13 +81,9 @@ export const DB = {
     LocalStorage.saveWorkoutProgress(all);
 
     if (!userId) return;
-    const { error } = await supabase.from('workout_progress').upsert({
-      user_id: userId,
-      session_key: sessionKey,
-      completed_exercises: completedIds,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'user_id,session_key' });
-    if (error) console.error('DB.saveWorkoutProgress error:', error);
+    if (_isOffline()) { _queue(userId, 'progress_upsert', { sessionKey, completedIds }); return; }
+    const error = await _upsertProgress(userId, sessionKey, completedIds);
+    if (error) _queue(userId, 'progress_upsert', { sessionKey, completedIds }, error);
   },
 
   // ── Stats derivadas ───────────────────────────────────────
@@ -165,8 +171,9 @@ export const DB = {
 
     const { userId } = Auth.getState();
     if (!userId) return;
+    if (_isOffline()) { _queue(userId, 'weight_upsert', entry); return; }
 
-    const { error } = await supabase.from('weight_logs').insert({
+    const { error } = await supabase.from('weight_logs').upsert({
       id:           entry.id,
       user_id:      userId,
       exercise_key: entry.exerciseKey,
@@ -174,8 +181,8 @@ export const DB = {
       weight:       entry.weight,
       session_key:  entry.sessionKey ?? null,
       recorded_at:  entry.recordedAt,
-    });
-    if (error) console.error('DB.addWeightEntry:', error);
+    }, { onConflict: 'id', ignoreDuplicates: true });
+    if (error) _queue(userId, 'weight_upsert', entry, error.message);
   },
 
   // ── Migración localStorage → Supabase ────────────────────
@@ -193,7 +200,10 @@ export const DB = {
       const rows = localHistory.map(s => _toRow(s, userId));
       const { error } = await supabase.from('sessions').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
       if (error) result.errors.push('No se pudieron sincronizar las sesiones.');
-      else result.sessions = localHistory.length;
+      else {
+        result.sessions = localHistory.length;
+        LocalStorage.clearSyncQueueKinds(userId, ['session_upsert']);
+      }
     }
 
     const localProgress = LocalStorage.getWorkoutProgress();
@@ -226,7 +236,10 @@ export const DB = {
           .from('workout_progress')
           .upsert(rows, { onConflict: 'user_id,session_key' });
         if (upsertError) result.errors.push('No se pudo guardar el progreso de ejercicios.');
-        else result.progress = rows.length;
+        else {
+          result.progress = rows.length;
+          LocalStorage.clearSyncQueueKinds(userId, ['progress_upsert']);
+        }
       }
     }
 
@@ -245,12 +258,122 @@ export const DB = {
         .from('weight_logs')
         .upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
       if (error) result.errors.push('No se pudieron sincronizar los pesos registrados.');
-      else result.weights = rows.length;
+      else {
+        result.weights = rows.length;
+        LocalStorage.clearSyncQueueKinds(userId, ['weight_upsert']);
+      }
     }
 
     return result;
   },
+
+  async flushPendingOperations(): Promise<SyncQueueFlushResult> {
+    const result: SyncQueueFlushResult = { synced: 0, remaining: 0, errors: [] };
+    const { userId } = Auth.getState();
+    if (!userId) {
+      result.errors.push('Inicia sesión para sincronizar los cambios pendientes.');
+      return result;
+    }
+    if (_isOffline()) {
+      result.remaining = LocalStorage.getPendingSyncCount(userId);
+      return result;
+    }
+
+    const pending = LocalStorage.getSyncQueue(userId);
+    const completedIds: string[] = [];
+    for (const operation of pending) {
+      const error = await _flushOperation(userId, operation);
+      if (error) {
+        result.errors.push(error);
+        break;
+      }
+      completedIds.push(operation.id);
+      result.synced++;
+    }
+    LocalStorage.removeSyncQueueItems(userId, completedIds);
+    result.remaining = LocalStorage.getPendingSyncCount(userId);
+    return result;
+  },
 };
+
+function _isOffline(): boolean {
+  return typeof navigator !== 'undefined' && navigator.onLine === false;
+}
+
+function _queue<T extends SyncQueueOperation['kind']>(
+  userId: string,
+  kind: T,
+  payload: Extract<SyncQueueOperation, { kind: T }>['payload'],
+  reason?: string,
+): void {
+  const queuedAt = new Date().toISOString();
+  const operation = {
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    userId,
+    kind,
+    payload,
+    queuedAt,
+  } as Extract<SyncQueueOperation, { kind: T }>;
+
+  if (!LocalStorage.enqueueSyncOperation(operation)) {
+    console.error('No se pudo guardar el cambio pendiente. Descarga una copia local antes de cerrar la aplicación.');
+    return;
+  }
+  if (reason) console.warn('Cambio guardado para sincronizar después:', reason);
+}
+
+async function _upsertProgress(userId: string, sessionKey: string, completedIds: string[]): Promise<string | null> {
+  const { data, error } = await supabase
+    .from('workout_progress')
+    .select('completed_exercises')
+    .eq('user_id', userId)
+    .eq('session_key', sessionKey)
+    .maybeSingle();
+  if (error) return error.message;
+
+  const remoteIds = (data?.['completed_exercises'] as string[] | null) ?? [];
+  const { error: upsertError } = await supabase.from('workout_progress').upsert({
+    user_id: userId,
+    session_key: sessionKey,
+    completed_exercises: [...new Set([...remoteIds, ...completedIds])],
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id,session_key' });
+  return upsertError?.message ?? null;
+}
+
+async function _flushOperation(userId: string, operation: SyncQueueOperation): Promise<string | null> {
+  switch (operation.kind) {
+    case 'session_upsert': {
+      const { error } = await supabase
+        .from('sessions')
+        .upsert(_toRow(operation.payload, userId), { onConflict: 'id', ignoreDuplicates: true });
+      return error?.message ?? null;
+    }
+    case 'session_delete': {
+      const { error } = await supabase
+        .from('sessions')
+        .delete()
+        .eq('id', operation.payload.sessionId)
+        .eq('user_id', userId);
+      return error?.message ?? null;
+    }
+    case 'progress_upsert':
+      return _upsertProgress(userId, operation.payload.sessionKey, operation.payload.completedIds);
+    case 'weight_upsert': {
+      const entry = operation.payload;
+      const { error } = await supabase.from('weight_logs').upsert({
+        id: entry.id,
+        user_id: userId,
+        exercise_key: entry.exerciseKey,
+        date: entry.date,
+        weight: entry.weight,
+        session_key: entry.sessionKey ?? null,
+        recorded_at: entry.recordedAt,
+      }, { onConflict: 'id', ignoreDuplicates: true });
+      return error?.message ?? null;
+    }
+  }
+}
 
 // ── Conversores ───────────────────────────────────────────────
 

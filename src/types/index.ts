@@ -55,6 +55,14 @@ export interface LocalDataSummary {
   hasActiveTimer: boolean;
 }
 
+export interface LocalDataImportResult extends LocalDataSummary {
+  importedSessions: number;
+  importedCompletedExercises: number;
+  importedWeightEntries: number;
+  importedPerformanceEntries: number;
+  restoredTimer: boolean;
+}
+
 export interface LocalMigrationResult {
   sessions: number;
   progress: number;
@@ -127,6 +135,42 @@ export interface WeightEntry {
   weight: number;        // kg
   sessionKey?: string;   // e.g. 'A1'
   recordedAt: string;    // ISO datetime
+}
+
+export type SyncQueueOperation =
+  | {
+      id: string;
+      userId: string;
+      kind: 'session_upsert';
+      payload: SessionEntry;
+      queuedAt: string;
+    }
+  | {
+      id: string;
+      userId: string;
+      kind: 'session_delete';
+      payload: { sessionId: string };
+      queuedAt: string;
+    }
+  | {
+      id: string;
+      userId: string;
+      kind: 'progress_upsert';
+      payload: { sessionKey: string; completedIds: string[] };
+      queuedAt: string;
+    }
+  | {
+      id: string;
+      userId: string;
+      kind: 'weight_upsert';
+      payload: WeightEntry;
+      queuedAt: string;
+    };
+
+export interface SyncQueueFlushResult {
+  synced: number;
+  remaining: number;
+  errors: string[];
 }
 
 // ── Auth ────────────────────────────────────────────────────

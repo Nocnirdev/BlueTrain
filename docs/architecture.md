@@ -37,7 +37,9 @@ BlueTrain/
 
 La aplicación usa Supabase para cuentas y registros sincronizados. Las tablas `sessions`, `workout_progress` y `weight_logs` tienen Row Level Security, por lo que cada cuenta solo accede a sus propios datos.
 
-`src/services/db.ts` es el único punto de acceso a los datos. Cuando una operación remota falla, conserva una copia local para no perder el registro inmediato. La copia JSON incluye sesiones, progreso, pesos, borradores de rendimiento, perfil y temporizador. Tras iniciar sesión, la persona usuaria puede aprobar la sincronización de sesiones, progreso y pesos; los borradores y el temporizador siguen siendo locales hasta una fase posterior.
+`src/services/db.ts` es el único punto de acceso a los datos. Cuando una operación remota falla, conserva una copia local para no perder el registro inmediato. Además, deja en una cola local y ligada a la cuenta la operación pendiente de sesión, progreso o peso; la aplicación la intenta enviar de nuevo al iniciar sesión o al recuperar la conexión. Las eliminaciones de sesiones también quedan pendientes de forma independiente.
+
+La copia JSON incluye sesiones, progreso, pesos, borradores de rendimiento, perfil y temporizador. Desde el perfil se puede restaurar una copia versión 1: antes de modificar el navegador, se valida su estructura, tamaño, fechas, tipos y duplicados. La restauración solo añade datos que falten y nunca borra ni sustituye los que ya existan. Subir después las sesiones, el progreso y los pesos a Supabase requiere una confirmación separada; los borradores y el temporizador siguen siendo locales.
 
 ## Publicación y funcionamiento sin conexión
 

@@ -11,9 +11,9 @@
 
 ## Próxima prioridad — Protección de datos
 
-- [ ] Importación validada de copias JSON, con previsualización y sin duplicados.
-- [ ] Sincronización pendiente y por cuenta cuando no haya conexión.
-- [ ] Mensajes claros y modo local cuando el servicio remoto no esté disponible.
+- [x] Importación validada de copias JSON, con previsualización y sin duplicados.
+- [x] Sincronización pendiente y por cuenta cuando no haya conexión.
+- [x] Mensajes claros y modo local cuando el servicio remoto no esté disponible.
 - [ ] Comprobación visible de que una nueva versión de la PWA se ha instalado.
 
 ## Contenido y entrenamiento

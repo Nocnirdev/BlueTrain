@@ -192,6 +192,14 @@
           <button class="btn btn--secondary btn--full" id="exportDataBtn" type="button">
             Descargar copia de seguridad
           </button>
+          <button class="btn btn--secondary btn--full" id="importDataBtn" type="button">
+            Restaurar una copia local
+          </button>
+          <input id="importDataInput" type="file" accept="application/json,.json" hidden>
+          <div class="profile-sync-status" id="syncStatus" role="status"></div>
+          <button class="btn btn--primary btn--full" id="syncDataBtn" type="button">
+            Sincronizar copia local
+          </button>
         </div>
         <div class="danger-zone">
           <button class="btn-danger" id="clearHistoryBtn">
