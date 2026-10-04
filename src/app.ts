@@ -184,6 +184,7 @@ function _setupEventListeners(): void {
   });
   document.getElementById('syncDataBtn')?.addEventListener('click', () => void syncLocalData());
   document.getElementById('signOutBtn')?.addEventListener('click', () => void signOut());
+  document.getElementById('headerSignOutBtn')?.addEventListener('click', () => void signOut());
 
   // Avatar btn → profile (delegado en dashboard, también en header)
   document.getElementById('headerAvatarBtn')?.addEventListener('click', () => void showProfileModal());

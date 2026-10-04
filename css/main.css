@@ -171,6 +171,12 @@ button {
   margin-bottom: var(--space-3);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .logo {
   font-family: var(--font-sans);
   font-size: var(--text-md);
@@ -331,3 +337,22 @@ button {
   letter-spacing: 0.03em;
 }
 .timer-btn:hover { color: var(--text); border-color: var(--border-focus); }
+
+.header-signout-btn {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-2);
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.header-signout-btn:hover { color: var(--error); background: var(--error-bg); border-color: var(--error-border); }
+.header-signout-btn:active { opacity: 0.8; }
+.header-signout-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
