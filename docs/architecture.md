@@ -47,6 +47,12 @@ Vite genera la versión de producción y `vite-plugin-pwa` crea el service worke
 
 Las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` se configuran en Vercel y no se guardan en Git. Cualquier cambio en ellas requiere un nuevo despliegue.
 
+## Revisión privada del cuaderno de Fuerza
+
+La sección **Fuerza** carga lotes locales `lote-fuerza-XXX.json` desde el propio dispositivo. El PDF de referencia se muestra mediante una URL temporal del navegador; no se carga a Vercel ni se transmite a Supabase. Las transcripciones iniciales, correcciones y estados se almacenan únicamente en `localStorage` bajo la clave `bt_strength_ocr_review_v1`. Cada lote se exporta por separado para mantener una copia privada recuperable.
+
+Esta revisión es deliberadamente independiente del historial de sesiones y de la copia general de BlueTrain: aprobar una página no crea entrenamientos ni sincroniza datos. El PDF original, los lotes OCR y sus exportaciones están excluidos de Git y no deben colocarse en `public/`.
+
 ## Material heredado
 
 Las carpetas raíz `js/` y `data/` contienen la implementación anterior sin TypeScript. Se conservan como referencia histórica, pero la versión publicada usa exclusivamente `src/` y Vite. No deben modificarse al añadir funciones nuevas salvo que se decida retirarlas en una limpieza separada.

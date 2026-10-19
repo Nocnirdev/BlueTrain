@@ -19,6 +19,8 @@
 ## Contenido y entrenamiento
 
 - [x] Completadas las sesiones B3 y C3 del tercer mesociclo, con progresión y taper de la semana 12.
+- [x] Revisor local y privado para lotes OCR del cuaderno de Fuerza, con comparación contra el PDF, corrección, estados y exportación por lote.
+- [ ] Validación manual de los lotes OCR del cuaderno de Fuerza antes de convertir páginas aprobadas en planes estructurados.
 - [ ] Biblioteca de ejercicios con filtros.
 - [ ] Planes por división: Open, Pro y Age Group.
 - [ ] Calculadoras de composición corporal.

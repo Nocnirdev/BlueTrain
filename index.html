@@ -50,6 +50,7 @@
       </div>
       <nav class="view-nav" id="viewNav" aria-label="Navegación principal">
         <button class="view-tab active" data-view="dashboard"   aria-current="page">Dashboard</button>
+        <button class="view-tab"        data-view="strength"    aria-current="false">Fuerza</button>
         <button class="view-tab"        data-view="training"    aria-current="false">Funcional</button>
         <button class="view-tab"        data-view="competition" aria-current="false">Competición</button>
         <button class="view-tab"        data-view="nutrition"   aria-current="false">Nutrición</button>
@@ -77,6 +78,9 @@
              aria-live="polite" aria-label="Plan de entrenamiento" tabindex="-1">
       <div class="loading-state">Cargando sesión…</div>
     </section>
+
+    <section class="main section-page" id="strengthSection"
+             aria-label="Revisión privada del cuaderno de Fuerza" tabindex="-1"></section>
 
     <section class="main section-page" id="competitionSection"
              aria-label="Guía de carrera funcional por estaciones"></section>
@@ -274,6 +278,10 @@
 
   <!-- TOAST: fuera del shell para informar también desde la pantalla de acceso -->
   <div class="bt-toast" id="btToast" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Los archivos se eligen desde el dispositivo y no se envían a ningún servicio. -->
+  <input id="strengthBatchInput" type="file" accept="application/json,.json" hidden>
+  <input id="strengthPdfInput" type="file" accept="application/pdf,.pdf" hidden>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

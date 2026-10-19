@@ -5,6 +5,13 @@ dist/
 *.local
 .DS_Store
 
+# Material privado del cuaderno de Fuerza: no publicar en Git, Vercel ni PWA.
+Ejercicios de Fuerza.pdf
+OCR privado/
+fuerza-ocr/
+lote-fuerza-*.json
+*-revisado.json
+
 # Claude Code / Playwright artifacts
 .playwright-mcp/
 *-check.png

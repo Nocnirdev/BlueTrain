@@ -72,7 +72,57 @@ export interface LocalMigrationResult {
   errors: string[];
 }
 
-export type ViewName = 'dashboard' | 'training' | 'competition' | 'nutrition' | 'history';
+export type ViewName = 'dashboard' | 'strength' | 'training' | 'competition' | 'nutrition' | 'history';
+
+// ── Revisión privada de OCR de Fuerza ─────────────────────
+// El contenido del cuaderno no se sincroniza con Supabase ni forma parte
+// de las copias generales de BlueTrain. Cada lote se conserva solo en el
+// navegador hasta que la persona lo exporta manualmente.
+
+export type StrengthOcrReviewStatus = 'needs_review' | 'reviewed' | 'approved' | 'skipped';
+
+export interface StrengthOcrLine {
+  text: string;
+  confidence?: number;
+  x?: number;
+  y?: number;
+}
+
+export interface StrengthOcrPage {
+  page: number;
+  rawText: string;
+  lines?: StrengthOcrLine[];
+}
+
+export interface StrengthOcrBatch {
+  schemaVersion: 1;
+  batchId: string;
+  createdAt: string;
+  source: {
+    fileName: string;
+    pageRange: [number, number];
+    totalPages?: number;
+  };
+  pages: StrengthOcrPage[];
+}
+
+export interface StrengthOcrPageReview {
+  correctedText: string;
+  notes: string;
+  status: StrengthOcrReviewStatus;
+  updatedAt: string;
+}
+
+export interface StrengthOcrSavedBatch {
+  batch: StrengthOcrBatch;
+  reviews: Record<string, StrengthOcrPageReview>;
+}
+
+export interface StrengthOcrReviewStore {
+  schemaVersion: 1;
+  updatedAt: string;
+  batches: Record<string, StrengthOcrSavedBatch>;
+}
 
 // ── Workout data types ──────────────────────────────────────
 

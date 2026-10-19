@@ -21,12 +21,14 @@ import {
   updateSyncStatus,
 } from '@/views/profile';
 import { initTimer, closeTimer } from '@/views/timer';
+import { renderStrength } from '@/views/strength';
 import type { ViewName } from '@/types';
 
 // ── Registro de secciones ────────────────────────────────────
 
 const APP_VIEWS: Record<ViewName, string> = {
   dashboard:   'dashboardSection',
+  strength:    'strengthSection',
   training:    'mainContent',
   competition: 'competitionSection',
   nutrition:   'nutritionSection',
@@ -35,6 +37,7 @@ const APP_VIEWS: Record<ViewName, string> = {
 
 const VIEW_SHOW: Record<ViewName, string[]> = {
   dashboard:   [],
+  strength:    [],
   training:    ['sessionNav', 'progressContainer'],
   competition: [],
   nutrition:   [],
@@ -74,6 +77,7 @@ export function switchView(view: ViewName): void {
   _updateHeaderHeight();
 
   if (view === 'dashboard') void renderDashboard();
+  if (view === 'strength') renderStrength();
   if (view === 'competition' && !_rendered['competition']) { renderCompetition(); _rendered['competition'] = true; }
   if (view === 'nutrition' && !_rendered['nutrition']) { renderNutrition(); _rendered['nutrition'] = true; }
   if (view === 'history') void renderHistory();

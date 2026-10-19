@@ -7,6 +7,7 @@ import '../css/components.css';
 import '../css/responsive.css';
 import '../css/tracker.css';
 import '../css/auth.css';
+import '../css/strength-review.css';
 
 initPwaUpdate();
 void init();
