@@ -67,9 +67,11 @@ function pageTotal() {
 }
 
 function imageFor(page, batchTemp) {
+  const before = new Set(readdirSync(batchTemp));
   command(poppler, ['-png', '-r', '240', '-f', String(page), '-l', String(page), inputPath, join(batchTemp, 'page')]);
-  const image = readdirSync(batchTemp).find(file => file.endsWith('.png'));
-  if (!image) throw new Error(`No se pudo rasterizar la página ${page}.`);
+  const images = readdirSync(batchTemp).filter(file => file.endsWith('.png') && !before.has(file));
+  if (images.length !== 1) throw new Error(`No se pudo identificar la imagen de la página ${page}.`);
+  const image = images[0];
   return join(batchTemp, image);
 }
 
